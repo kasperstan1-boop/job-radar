@@ -58,7 +58,6 @@
         display: none !important;
       }
 
-      /* Grid & Inputs */
       .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -97,7 +96,6 @@
         outline: none;
       }
 
-      /* Chipy i checkboxy */
       .checkbox-label {
         display: flex;
         align-items: center;
@@ -135,7 +133,6 @@
         accent-color: var(--primary);
       }
 
-      /* Przyciski */
       button {
         background: var(--primary);
         color: #fff;
@@ -173,7 +170,6 @@
         margin-top: 20px;
       }
 
-      /* Banery statusu */
       .status-box {
         padding: 12px 16px;
         border-radius: 8px;
@@ -192,17 +188,6 @@
         border: 1px solid var(--danger);
         color: #fecaca;
         display: block;
-      }
-
-      .badge {
-        background: #0369a1;
-        color: #bae6fd;
-        font-size: 11px;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-left: 6px;
       }
       .section-title {
         border-bottom: 1px solid var(--border);
@@ -292,13 +277,7 @@
 
         <div id="dashboard-status" class="status-box"></div>
 
-        <!-- FILAR 1: ROLE I STANOWISKA -->
-        <div class="section-title">
-          1. Taksonomia Ról i Stanowisk (Wybierz pasujące)
-        </div>
-        <p style="font-size: 12px; margin-bottom: 6px">
-          Filar 1: Ekosystem AI & Danych
-        </p>
+        <div class="section-title">1. Taksonomia Ról i Stanowisk</div>
         <div class="grid-roles">
           <label class="role-chip"
             ><input type="checkbox" name="role" value="ai_model_trainer" /> AI
@@ -306,7 +285,7 @@
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="rlhf_contributor" /> RLHF
-            Contributor / Red Team</label
+            Contributor</label
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="audio_image_annotator" />
@@ -318,14 +297,8 @@
               name="role"
               value="search_relevance_evaluator"
             />
-            Search Relevance Evaluator</label
+            Search Relevance</label
           >
-        </div>
-
-        <p style="font-size: 12px; margin-top: 14px; margin-bottom: 6px">
-          Filar 2: Back-Office, E-commerce & „Ciche Role”
-        </p>
-        <div class="grid-roles">
           <label class="role-chip"
             ><input type="checkbox" name="role" value="async_chat_support" />
             Async Chat Support</label
@@ -336,37 +309,31 @@
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="ecommerce_ops" />
-            E-commerce Ops (Shopify/Amazon)</label
+            E-commerce Ops</label
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="data_verification" />
-            Weryfikacja Danych (KYC/AML)</label
+            Weryfikacja Danych</label
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="virtual_assistant" />
-            Wirtualny Asystent (No-Calls)</label
+            Wirtualny Asystent</label
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="bookkeeping_ap_ar" />
             Księgowość AP/AR</label
           >
-        </div>
-
-        <p style="font-size: 12px; margin-top: 14px; margin-bottom: 6px">
-          Filar 3 & 4: IT, Automatyzacja, Analityka
-        </p>
-        <div class="grid-roles">
           <label class="role-chip"
             ><input type="checkbox" name="role" value="python_scraper" /> Python
-            Scraper / Integracje</label
+            Scraper</label
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="no_code_automation" />
-            No-Code (Make / n8n / Zapier)</label
+            No-Code (Make/n8n)</label
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="devops_sre_async" />
-            DevOps / SRE (Async)</label
+            DevOps / SRE</label
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="technical_writer" />
@@ -374,152 +341,76 @@
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="live_ops_risk" /> Live
-            Ops & Risk Analyst</label
+            Ops & Risk</label
           >
           <label class="role-chip"
             ><input type="checkbox" name="role" value="qa_localization" /> QA &
-            Lokalizacja Gier</label
+            Lokalizacja</label
           >
         </div>
 
-        <div class="grid-2" style="margin-top: 14px">
-          <div>
-            <label>Własne Tagi (oddziel przecinkami)</label>
-            <input
-              type="text"
-              id="custom-tags"
-              placeholder="np. prompt engineer, rust, sql"
-            />
-          </div>
-          <div>
-            <label>Tryb dopasowania ról</label>
-            <select id="match-mode">
-              <option value="any">Dowolna z wybranych ról (OR)</option>
-              <option value="all">Wszystkie wybrane role (AND)</option>
-            </select>
-          </div>
-        </div>
+        <div class="section-title">2. Unikalne Filtry Jakościowe LLM</div>
+        <label class="checkbox-label"
+          ><input type="checkbox" id="strict-no-phone" /> Gwarancja „No-Phone” –
+          odrzucanie call-center i infolinii.</label
+        >
+        <label class="checkbox-label"
+          ><input type="checkbox" id="async-no-spyware" /> Anti-Spyware &
+          Async-First – odrzucanie oprogramowania monitorującego.</label
+        >
+        <label class="checkbox-label"
+          ><input type="checkbox" id="ignore-degree" /> Ignoruj wymóg dyplomu /
+          studiów.</label
+        >
 
-        <!-- FILTRY JAKOŚCIOWE LLM -->
-        <div class="section-title">
-          2. Unikalne Filtry Jakościowe LLM (Przewaga Job Radar)
-        </div>
-        <label class="checkbox-label">
-          <input type="checkbox" id="strict-no-phone" />
-          <strong>Gwarancja „No-Phone”</strong> – Automatyczne odrzucanie ofert
-          maskujących call-center, infolinie i „dynamiczną komunikację głosową”.
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" id="async-no-spyware" />
-          <strong>Anti-Spyware & Async-First</strong> – Odrzucanie inwigilacji
-          (Time Doctor, Hubstaff, zrzuty ekranu, śledzenie myszy).
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" id="ignore-degree" />
-          <strong>Ignoruj wymóg dyplomu / studiów</strong> – Skupienie na
-          realnych umiejętnościach.
-        </label>
-
-        <!-- WIDEŁKI I FINANSE -->
         <div class="section-title">3. Widełki Finansowe</div>
-        <label class="checkbox-label">
-          <input
+        <label class="checkbox-label"
+          ><input
             type="checkbox"
             id="salary-enabled"
             onchange="toggleSalaryInputs()"
           />
-          Włącz twardy filtr finansowy
-        </label>
+          Włącz twardy filtr finansowy</label
+        >
         <div
           class="grid-2"
           id="salary-fields"
           style="opacity: 0.5; pointer-events: none"
         >
           <div>
-            <label>Min. stawka roczna (USD)</label>
-            <input type="number" id="min-annual" placeholder="np. 45000" />
+            <label>Min. stawka roczna (USD)</label
+            ><input type="number" id="min-annual" placeholder="45000" />
           </div>
           <div>
-            <label>Min. stawka godzinowa (USD)</label>
-            <input type="number" id="min-hourly" placeholder="np. 25" />
+            <label>Min. stawka godzinowa (USD)</label
+            ><input type="number" id="min-hourly" placeholder="25" />
           </div>
         </div>
-        <label class="checkbox-label">
-          <input type="checkbox" id="require-disclosed" />
-          Odrzucaj oferty bez jawnych widełek płacowych
-        </label>
+        <label class="checkbox-label"
+          ><input type="checkbox" id="require-disclosed" /> Odrzucaj oferty bez
+          jawnych widełek płacowych</label
+        >
 
-        <!-- GEO & ŚWIEŻOŚĆ -->
-        <div class="section-title">4. Zasięg & Świeżość Ofert</div>
+        <div class="section-title">4. Kanały Dostarczania Digestu</div>
         <div class="grid-2">
           <div>
-            <label>Świeżość ogłoszeń</label>
-            <select id="freshness">
-              <option value="24">Ostatnie 24 godziny</option>
-              <option value="48">Ostatnie 48 godzin</option>
-              <option value="168">Ostatnie 7 dni</option>
-            </select>
+            <label>Godzina raportu (0-23 UTC)</label
+            ><input type="number" id="digest-hour" value="7" />
           </div>
           <div>
-            <label>Zasięg geograficzny</label>
-            <label class="checkbox-label" style="margin-top: 10px">
-              <input type="checkbox" id="worldwide-only" /> Tylko 100% Worldwide
-              Remote
-            </label>
+            <label>Maks. ofert w raporcie</label
+            ><input type="number" id="max-jobs" value="25" />
           </div>
         </div>
+        <label class="checkbox-label"
+          ><input type="checkbox" id="email-enabled" /> Wysyłaj raport
+          e-mail</label
+        >
+        <label>Teams Adaptive Cards Webhook URL</label
+        ><input type="text" id="teams-webhook" placeholder="https://..." />
+        <label>Slack Webhook URL</label
+        ><input type="text" id="slack-webhook" placeholder="https://..." />
 
-        <!-- KANAŁY DOSTARCZANIA -->
-        <div class="section-title">5. Kanały Dostarczania Digestu</div>
-        <div class="grid-2">
-          <div>
-            <label>Godzina raportu (0-23 UTC)</label>
-            <input type="number" id="digest-hour" min="0" max="23" value="7" />
-          </div>
-          <div>
-            <label>Maks. ofert w jednym raporcie</label>
-            <input type="number" id="max-jobs" min="5" max="50" value="25" />
-          </div>
-        </div>
-        <label class="checkbox-label">
-          <input type="checkbox" id="email-enabled" /> Wysyłaj poranny raport
-          e-mail
-        </label>
-        <label>Teams Adaptive Cards Webhook URL (Power Automate)</label>
-        <input
-          type="text"
-          id="teams-webhook"
-          placeholder="https://default...webhook.office.com/..."
-        />
-        <label>Slack Webhook URL</label>
-        <input
-          type="text"
-          id="slack-webhook"
-          placeholder="https://hooks.slack.com/services/..."
-        />
-
-        <!-- WYKLUCZENIA -->
-        <div class="section-title">6. Czarna Lista (Wykluczenia)</div>
-        <div class="grid-2">
-          <div>
-            <label>Wykluczone firmy (oddziel przecinkami)</label>
-            <input
-              type="text"
-              id="blocklist-companies"
-              placeholder="np. Crossover, BairesDev"
-            />
-          </div>
-          <div>
-            <label>Wykluczone słowa kluczowe</label>
-            <input
-              type="text"
-              id="blocklist-keywords"
-              placeholder="np. sales, cold calling"
-            />
-          </div>
-        </div>
-
-        <!-- AKCJE -->
         <div
           class="actions-bar"
           style="
@@ -530,7 +421,7 @@
         >
           <button onclick="savePreferences()">💾 Zapisz preferencje</button>
           <button class="danger" onclick="resetSeenJobs()">
-            ⚡ Wymuś re-ewaluację (Reset historii ofert)
+            ⚡ Reset historii ofert (Re-ewaluacja)
           </button>
         </div>
       </div>
@@ -538,10 +429,11 @@
 
     <script>
       const SUPABASE_URL = "https://djnauhtmjlwssvheujoi.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqbmF1aHRtamx3c3ZoZXVqb2kiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MDc0MjAwMCwiZXhwIjoyMDU2MzE4MDAwfQ.K2vW9aR8dF011x8vS-R71vW1Xq2Z1x3Y4z5A6B7C8D9";
       let currentRawToken = "";
 
       async function init() {
-        // 1. Sprawdź, czy URL zawiera hash #token=...
         const hash = window.location.hash;
         if (hash.includes("#token=")) {
           const token = hash.split("#token=")[1].split("&")[0];
@@ -550,8 +442,6 @@
           await exchangeToken(token);
           return;
         }
-
-        // 2. Sprawdź, czy sesja istnieje w sessionStorage
         const sessionToken = sessionStorage.getItem("session_token");
         if (sessionToken) {
           showDashboard();
@@ -571,7 +461,11 @@
         try {
           const res = await fetch(`${SUPABASE_URL}/functions/v1/api-profile`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            },
             body: JSON.stringify({ email }),
           });
           const data = await res.json();
@@ -590,7 +484,11 @@
         try {
           const res = await fetch(`${SUPABASE_URL}/functions/v1/api-session`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            },
             body: JSON.stringify({ token }),
           });
           const data = await res.json();
@@ -605,14 +503,11 @@
       }
 
       function loginDirectly() {
-        if (currentRawToken) {
-          exchangeToken(currentRawToken);
-        }
+        if (currentRawToken) exchangeToken(currentRawToken);
       }
 
       function downloadKeyFile() {
-        const tokenToSave =
-          currentRawToken || prompt("Podaj swój token do zapisania w pliku:");
+        const tokenToSave = currentRawToken || prompt("Podaj swój token:");
         if (!tokenToSave) return;
         const blob = new Blob(
           [
@@ -634,7 +529,10 @@
             `${SUPABASE_URL}/functions/v1/api-preferences`,
             {
               method: "GET",
-              headers: { Authorization: `Bearer ${sessionToken}` },
+              headers: {
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${sessionToken}`,
+              },
             },
           );
           const data = await res.json();
@@ -647,26 +545,16 @@
       }
 
       function populateForm(p) {
-        // Role
         const selectedRoles = p.roles?.selected || [];
         document.querySelectorAll("input[name='role']").forEach((cb) => {
           cb.checked = selectedRoles.includes(cb.value);
         });
-        document.getElementById("custom-tags").value = (
-          p.roles?.custom_tags || []
-        ).join(", ");
-        document.getElementById("match-mode").value =
-          p.roles?.match_mode || "any";
-
-        // Filtry LLM
         document.getElementById("strict-no-phone").checked =
           !!p.strict_no_phone;
         document.getElementById("async-no-spyware").checked =
           !!p.async_first_no_spyware;
         document.getElementById("ignore-degree").checked =
           !!p.ignore_degree_requirement;
-
-        // Płace
         const salary = p.salary || {};
         document.getElementById("salary-enabled").checked = !!salary.enabled;
         document.getElementById("min-annual").value =
@@ -676,13 +564,6 @@
         document.getElementById("require-disclosed").checked =
           !!salary.require_disclosed;
         toggleSalaryInputs();
-
-        // Geo & Świeżość
-        document.getElementById("freshness").value = p.freshness_hours || 24;
-        document.getElementById("worldwide-only").checked =
-          !!p.geo?.remote_worldwide_only;
-
-        // Notyfikacje
         const notif = p.notifications || {};
         document.getElementById("digest-hour").value =
           notif.digest_hour_utc ?? 7;
@@ -694,14 +575,6 @@
           notif.teams_webhook_url || "";
         document.getElementById("slack-webhook").value =
           notif.slack_webhook_url || "";
-
-        // Wykluczenia
-        document.getElementById("blocklist-companies").value = (
-          p.blocklist?.companies || []
-        ).join(", ");
-        document.getElementById("blocklist-keywords").value = (
-          p.blocklist?.keywords || []
-        ).join(", ");
       }
 
       async function savePreferences() {
@@ -709,17 +582,12 @@
         const selectedRoles = Array.from(
           document.querySelectorAll("input[name='role']:checked"),
         ).map((cb) => cb.value);
-        const customTags = document
-          .getElementById("custom-tags")
-          .value.split(",")
-          .map((t) => t.trim())
-          .filter(Boolean);
 
         const preferences = {
           roles: {
             selected: selectedRoles,
-            custom_tags: customTags,
-            match_mode: document.getElementById("match-mode").value,
+            custom_tags: [],
+            match_mode: "any",
           },
           strict_no_phone: document.getElementById("strict-no-phone").checked,
           async_first_no_spyware:
@@ -735,29 +603,10 @@
             require_disclosed:
               document.getElementById("require-disclosed").checked,
           },
-          freshness_hours:
-            parseInt(document.getElementById("freshness").value) || 24,
-          geo: {
-            remote_worldwide_only:
-              document.getElementById("worldwide-only").checked,
-            excluded_regions: [],
-          },
-          language: {
-            offer_languages: ["en"],
-            require_english_ok: true,
-          },
-          blocklist: {
-            companies: document
-              .getElementById("blocklist-companies")
-              .value.split(",")
-              .map((s) => s.trim())
-              .filter(Boolean),
-            keywords: document
-              .getElementById("blocklist-keywords")
-              .value.split(",")
-              .map((s) => s.trim())
-              .filter(Boolean),
-          },
+          freshness_hours: 24,
+          geo: { remote_worldwide_only: true, excluded_regions: [] },
+          language: { offer_languages: ["en"], require_english_ok: true },
+          blocklist: { companies: [], keywords: [] },
           allowlist: { companies: [] },
           notifications: {
             digest_hour_utc:
@@ -780,16 +629,17 @@
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
+                apikey: SUPABASE_ANON_KEY,
                 Authorization: `Bearer ${sessionToken}`,
               },
               body: JSON.stringify({ preferences }),
             },
           );
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Błąd zapisu preferencji");
+          if (!res.ok) throw new Error(data.error || "Błąd zapisu");
           showStatus(
             "dashboard-status",
-            "Preferencje zapisane pomyślnie w chmurze!",
+            "Preferencje zapisane pomyślnie!",
             "success",
           );
         } catch (err) {
@@ -799,9 +649,7 @@
 
       async function resetSeenJobs() {
         if (
-          !confirm(
-            "Wymuszenie re-ewaluacji: Czy na pewno chcesz wyczyścić historię przesłanych ofert? Podczas kolejnego uruchomienia bot oceni oferty z ostatnich 24h na nowo.",
-          )
+          !confirm("Czy na pewno chcesz zresetować historię widzianych ofert?")
         )
           return;
         const sessionToken = sessionStorage.getItem("session_token");
@@ -810,14 +658,17 @@
             `${SUPABASE_URL}/functions/v1/api-reset-seen-jobs`,
             {
               method: "DELETE",
-              headers: { Authorization: `Bearer ${sessionToken}` },
+              headers: {
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${sessionToken}`,
+              },
             },
           );
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || "Błąd resetu");
           showStatus(
             "dashboard-status",
-            "Historia wyczyszczona. Rynek zostanie oceniony na nowo!",
+            "Historia ofert zresetowana!",
             "success",
           );
         } catch (err) {
