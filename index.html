@@ -429,8 +429,9 @@
 
     <script>
       const SUPABASE_URL = "https://djnauhtmjlwssvheujoi.supabase.co";
-      const SUPABASE_ANON_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqbmF1aHRtamx3c3ZoZXVqb2kiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MDc0MjAwMCwiZXhwIjoyMDU2MzE4MDAwfQ.K2vW9aR8dF011x8vS-R71vW1Xq2Z1x3Y4z5A6B7C8D9";
+      // Nowy klucz publiczny (publishable) z panelu Supabase Settings -> API Keys:
+      const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_ISgWk219dnL4IQ223uVzvuA_myqwf";
       let currentRawToken = "";
 
       async function init() {
@@ -463,8 +464,8 @@
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              apikey: SUPABASE_ANON_KEY,
-              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+              apikey: SUPABASE_PUBLISHABLE_KEY,
+              Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
             },
             body: JSON.stringify({ email }),
           });
@@ -486,8 +487,8 @@
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              apikey: SUPABASE_ANON_KEY,
-              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+              apikey: SUPABASE_PUBLISHABLE_KEY,
+              Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
             },
             body: JSON.stringify({ token }),
           });
@@ -530,7 +531,7 @@
             {
               method: "GET",
               headers: {
-                apikey: SUPABASE_ANON_KEY,
+                apikey: SUPABASE_PUBLISHABLE_KEY,
                 Authorization: `Bearer ${sessionToken}`,
               },
             },
@@ -629,7 +630,7 @@
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
-                apikey: SUPABASE_ANON_KEY,
+                apikey: SUPABASE_PUBLISHABLE_KEY,
                 Authorization: `Bearer ${sessionToken}`,
               },
               body: JSON.stringify({ preferences }),
@@ -659,7 +660,7 @@
             {
               method: "DELETE",
               headers: {
-                apikey: SUPABASE_ANON_KEY,
+                apikey: SUPABASE_PUBLISHABLE_KEY,
                 Authorization: `Bearer ${sessionToken}`,
               },
             },
