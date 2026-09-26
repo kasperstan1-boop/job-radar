@@ -57,7 +57,6 @@
       .hidden {
         display: none !important;
       }
-
       .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -95,7 +94,6 @@
         border-color: var(--accent);
         outline: none;
       }
-
       .checkbox-label {
         display: flex;
         align-items: center;
@@ -132,7 +130,6 @@
         height: 16px;
         accent-color: var(--primary);
       }
-
       button {
         background: var(--primary);
         color: #fff;
@@ -169,7 +166,6 @@
         flex-wrap: wrap;
         margin-top: 20px;
       }
-
       .status-box {
         padding: 12px 16px;
         border-radius: 8px;
@@ -189,6 +185,12 @@
         color: #fecaca;
         display: block;
       }
+      .status-box.info {
+        background: #0c4a6e;
+        border: 1px solid #0284c7;
+        color: #bae6fd;
+        display: block;
+      }
       .section-title {
         border-bottom: 1px solid var(--border);
         padding-bottom: 8px;
@@ -198,17 +200,24 @@
         font-weight: 600;
         color: var(--accent);
       }
+      .info-box {
+        margin-top: 20px;
+        background: var(--bg-input);
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
     </style>
   </head>
   <body>
     <div class="app-container">
-      <!-- EKRAN 1: REJESTRACJA I LOGOWANIE -->
+      <!-- EKRAN 1: REJESTRACJA -->
       <div id="auth-screen" class="card">
         <h1>Job Radar v3.6</h1>
         <p>
           Autonomiczny system monitorowania ofert zdalnych z audytem jakościowym
-          LLM Gemini. Wpisz swój adres e-mail, aby uzyskać bezhasłowy dostęp do
-          systemu.
+          LLM Gemini. Wpisz swój adres e-mail — wyślemy Ci jednorazowy link
+          weryfikacyjny, który aktywuje konto i pozwoli ustawić filtry.
         </p>
 
         <div id="auth-status" class="status-box"></div>
@@ -218,39 +227,27 @@
           type="email"
           id="email-input"
           placeholder="np. twoj-mail@domena.pl"
+          autocomplete="email"
         />
 
-        <button onclick="handleAuthSubmit()">
-          Wygeneruj i odblokuj dostęp
-        </button>
+        <button onclick="handleAuthSubmit()">Wyślij link dostępowy</button>
 
-        <div
-          id="token-result"
-          class="hidden"
-          style="
-            margin-top: 20px;
-            background: var(--bg-input);
-            padding: 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-          "
-        >
+        <div id="email-sent-info" class="info-box hidden">
           <h3 style="margin-bottom: 8px; font-size: 15px">
-            Dostęp został wygenerowany!
+            📬 Sprawdź skrzynkę e-mail
           </h3>
-          <p id="token-desc" style="margin-bottom: 12px"></p>
-          <div class="actions-bar">
-            <button onclick="downloadKeyFile()">
-              💾 Pobierz plik klucza (.key)
-            </button>
-            <button class="secondary" onclick="loginDirectly()">
-              🚀 Przejdź do panelu
-            </button>
-          </div>
+          <p style="margin: 0 0 10px 0">
+            Wysłaliśmy Ci link weryfikacyjny. Kliknij go, aby aktywować konto i
+            przejść do panelu konfiguracji.
+          </p>
+          <p style="margin: 0; font-size: 12px; color: var(--text-muted)">
+            Nie widzisz wiadomości? Sprawdź folder <strong>Spam</strong>. Link
+            jest ważny 24 godziny.
+          </p>
         </div>
       </div>
 
-      <!-- EKRAN 2: PEŁNY PANEL PREFERENCJI -->
+      <!-- EKRAN 2: PANEL PREFERENCJI -->
       <div id="dashboard-screen" class="card hidden">
         <div
           style="
@@ -268,9 +265,6 @@
             </p>
           </div>
           <div style="display: flex; gap: 8px">
-            <button class="secondary" onclick="downloadKeyFile()">
-              Klucz .key
-            </button>
             <button class="danger" onclick="logout()">Wyloguj</button>
           </div>
         </div>
@@ -351,12 +345,12 @@
 
         <div class="section-title">2. Unikalne Filtry Jakościowe LLM</div>
         <label class="checkbox-label"
-          ><input type="checkbox" id="strict-no-phone" /> Gwarancja „No-Phone” –
+          ><input type="checkbox" id="strict-no-phone" /> Gwarancja „No-Phone” —
           odrzucanie call-center i infolinii.</label
         >
         <label class="checkbox-label"
           ><input type="checkbox" id="async-no-spyware" /> Anti-Spyware &
-          Async-First – odrzucanie oprogramowania monitorującego.</label
+          Async-First — odrzucanie oprogramowania monitorującego.</label
         >
         <label class="checkbox-label"
           ><input type="checkbox" id="ignore-degree" /> Ignoruj wymóg dyplomu /
@@ -378,12 +372,12 @@
           style="opacity: 0.5; pointer-events: none"
         >
           <div>
-            <label>Min. stawka roczna (USD)</label
-            ><input type="number" id="min-annual" placeholder="45000" />
+            <label>Min. stawka roczna (USD)</label>
+            <input type="number" id="min-annual" placeholder="45000" />
           </div>
           <div>
-            <label>Min. stawka godzinowa (USD)</label
-            ><input type="number" id="min-hourly" placeholder="25" />
+            <label>Min. stawka godzinowa (USD)</label>
+            <input type="number" id="min-hourly" placeholder="25" />
           </div>
         </div>
         <label class="checkbox-label"
@@ -394,22 +388,22 @@
         <div class="section-title">4. Kanały Dostarczania Digestu</div>
         <div class="grid-2">
           <div>
-            <label>Godzina raportu (0-23 UTC)</label
-            ><input type="number" id="digest-hour" value="7" />
+            <label>Godzina raportu (0–23 UTC)</label>
+            <input type="number" id="digest-hour" value="7" />
           </div>
           <div>
-            <label>Maks. ofert w raporcie</label
-            ><input type="number" id="max-jobs" value="25" />
+            <label>Maks. ofert w raporcie</label>
+            <input type="number" id="max-jobs" value="25" />
           </div>
         </div>
         <label class="checkbox-label"
           ><input type="checkbox" id="email-enabled" /> Wysyłaj raport
           e-mail</label
         >
-        <label>Teams Adaptive Cards Webhook URL</label
-        ><input type="text" id="teams-webhook" placeholder="https://..." />
-        <label>Slack Webhook URL</label
-        ><input type="text" id="slack-webhook" placeholder="https://..." />
+        <label>Teams Adaptive Cards Webhook URL</label>
+        <input type="text" id="teams-webhook" placeholder="https://..." />
+        <label>Slack Webhook URL</label>
+        <input type="text" id="slack-webhook" placeholder="https://..." />
 
         <div
           class="actions-bar"
@@ -428,10 +422,28 @@
     </div>
 
     <script>
-      const SUPABASE_URL = "https://djnauhtmjlwssvheujoi.supabase.co";
-      // Nowy klucz publiczny (publishable) z panelu Supabase Settings -> API Keys:
-      const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_ISgWk219dnL4IQ223uVzvuA_myqwf";
+      // ═══════════════════════════════════════════════════════════════
+      // KONFIGURACJA — SPRAWDŹ DOKŁADNIE TE DWIE WARTOŚCI
+      // ═══════════════════════════════════════════════════════════════
+
+      // 1. URL projektu Supabase (bez końcowego slasha)
+      //    Project ref: djnautkmjlwssvheujoi (NIE "djnauhtmj..."!)
+      const SUPABASE_URL = "https://djnautkmjlwssvheujoi.supabase.co";
+
+      // 2. LEGACY anon key (JWT, zaczyna się od "eyJ...")
+      //    ⚠️ NIE używaj klucza "sb_publishable_..." — Supabase Edge Functions
+      //    Gateway go nie akceptuje (błąd 401 UNAUTHORIZED_INVALID_API_KEY).
+      //
+      //    Gdzie znaleźć:
+      //    Supabase Dashboard → Settings (⚙️) → API
+      //    → zakładka "Legacy anon, service_role API keys"
+      //    → sekcja "anon public" → skopiuj klucz "eyJ..."
+      //
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqbmF1aHRtamx3c3N2aGV1am9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNjk0OTgsImV4cCI6MjEwNTk0NTQ5OH0.pCzPmIsNBIuA_fcGdhpPxeYgqApUOG8KzS7IO35F-Zc";
+
+      // ═══════════════════════════════════════════════════════════════
+
       let currentRawToken = "";
 
       async function init() {
@@ -451,31 +463,42 @@
       }
 
       async function handleAuthSubmit() {
-        const email = document.getElementById("email-input").value;
-        if (!email || !email.includes("@")) {
+        const email = document.getElementById("email-input").value.trim();
+        if (!email || !email.includes("@") || email.length < 5) {
           showStatus("auth-status", "Wpisz poprawny adres e-mail.", "error");
           return;
         }
 
-        showStatus("auth-status", "Generowanie tokenu i profilu...", "success");
+        showStatus("auth-status", "Wysyłanie linku weryfikacyjnego...", "info");
 
         try {
           const res = await fetch(`${SUPABASE_URL}/functions/v1/api-profile`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              apikey: SUPABASE_PUBLISHABLE_KEY,
-              Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
             },
             body: JSON.stringify({ email }),
           });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Wystąpił błąd");
 
-          currentRawToken = data.token;
-          document.getElementById("token-desc").innerText = data.message;
-          document.getElementById("token-result").classList.remove("hidden");
-          showStatus("auth-status", "Token wygenerowany pomyślnie!", "success");
+          let data = {};
+          try {
+            data = await res.json();
+          } catch {
+            /* pusta odpowiedź */
+          }
+
+          if (!res.ok || data.success !== true) {
+            const msg =
+              data.error || `Błąd serwera (${res.status}). Spróbuj ponownie.`;
+            throw new Error(msg);
+          }
+
+          // Sukces — backend wysłał e-mail, nie zwraca tokenu
+          document.getElementById("auth-status").style.display = "none";
+          document.getElementById("email-sent-info").classList.remove("hidden");
+          document.getElementById("email-input").disabled = true;
         } catch (err) {
           showStatus("auth-status", err.message, "error");
         }
@@ -487,13 +510,15 @@
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              apikey: SUPABASE_PUBLISHABLE_KEY,
-              Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
             },
             body: JSON.stringify({ token }),
           });
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Błąd autoryzacji tokenu");
+          if (!res.ok || !data.session_token) {
+            throw new Error(data.error || "Błąd autoryzacji tokenu.");
+          }
 
           sessionStorage.setItem("session_token", data.session_token);
           showDashboard();
@@ -503,27 +528,6 @@
         }
       }
 
-      function loginDirectly() {
-        if (currentRawToken) exchangeToken(currentRawToken);
-      }
-
-      function downloadKeyFile() {
-        const tokenToSave = currentRawToken || prompt("Podaj swój token:");
-        if (!tokenToSave) return;
-        const blob = new Blob(
-          [
-            `JOB_RADAR_ACCESS_KEY=${tokenToSave}\nLOGIN_URL=https://kasperstan1-boop.github.io/job-radar/index.html#token=${tokenToSave}`,
-          ],
-          { type: "text/plain" },
-        );
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "job-radar-access.key";
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-
       async function loadPreferences(sessionToken) {
         try {
           const res = await fetch(
@@ -531,14 +535,14 @@
             {
               method: "GET",
               headers: {
-                apikey: SUPABASE_PUBLISHABLE_KEY,
+                apikey: SUPABASE_ANON_KEY,
                 Authorization: `Bearer ${sessionToken}`,
               },
             },
           );
           const data = await res.json();
           if (!res.ok)
-            throw new Error(data.error || "Nie udało się pobrać preferencji");
+            throw new Error(data.error || "Nie udało się pobrać preferencji.");
           populateForm(data.preferences || {});
         } catch (err) {
           showStatus("dashboard-status", err.message, "error");
@@ -580,6 +584,14 @@
 
       async function savePreferences() {
         const sessionToken = sessionStorage.getItem("session_token");
+        if (!sessionToken) {
+          showStatus(
+            "dashboard-status",
+            "Sesja wygasła. Zaloguj się ponownie.",
+            "error",
+          );
+          return;
+        }
         const selectedRoles = Array.from(
           document.querySelectorAll("input[name='role']:checked"),
         ).map((cb) => cb.value);
@@ -630,17 +642,17 @@
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
-                apikey: SUPABASE_PUBLISHABLE_KEY,
+                apikey: SUPABASE_ANON_KEY,
                 Authorization: `Bearer ${sessionToken}`,
               },
               body: JSON.stringify({ preferences }),
             },
           );
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Błąd zapisu");
+          if (!res.ok) throw new Error(data.error || "Błąd zapisu.");
           showStatus(
             "dashboard-status",
-            "Preferencje zapisane pomyślnie!",
+            "✅ Preferencje zapisane pomyślnie!",
             "success",
           );
         } catch (err) {
@@ -660,16 +672,16 @@
             {
               method: "DELETE",
               headers: {
-                apikey: SUPABASE_PUBLISHABLE_KEY,
+                apikey: SUPABASE_ANON_KEY,
                 Authorization: `Bearer ${sessionToken}`,
               },
             },
           );
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Błąd resetu");
+          if (!res.ok) throw new Error(data.error || "Błąd resetu.");
           showStatus(
             "dashboard-status",
-            "Historia ofert zresetowana!",
+            "✅ Historia ofert zresetowana!",
             "success",
           );
         } catch (err) {
@@ -694,12 +706,17 @@
         window.location.hash = "";
         document.getElementById("dashboard-screen").classList.add("hidden");
         document.getElementById("auth-screen").classList.remove("hidden");
+        document.getElementById("email-sent-info").classList.add("hidden");
+        document.getElementById("email-input").disabled = false;
+        document.getElementById("email-input").value = "";
+        document.getElementById("auth-status").style.display = "none";
       }
 
       function showStatus(elemId, msg, type) {
         const el = document.getElementById(elemId);
         el.className = `status-box ${type}`;
         el.innerText = msg;
+        el.style.display = "block";
       }
 
       init();
