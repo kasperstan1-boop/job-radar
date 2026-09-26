@@ -244,15 +244,12 @@ job-radar/
 ├── .env.example
 ├── requirements.txt
 └── README.md
-## 📄 Przykładowy digest
-
+📄 Przykładowy digest
 Job Radar wysyła codziennie spersonalizowany raport HTML. Każda oferta zawiera ocenę LLM (0–100%), 2-zdaniowe podsumowanie i czerwone flagi.
 
-![Przykładowy digest](examples/digest_example.png)
+https://examples/digest_example.png
 
-> Pełny HTML znajdziesz w [`examples/digest_example.html`](examples/digest_example.html).
-
----
+Pełny HTML znajdziesz w examples/digest_example.html.
 
 🧪 Testy i ewaluacja
 bash
@@ -290,21 +287,4 @@ MIT — używaj, modyfikuj, sprzedawaj. Kod dostarczony bez gwarancji.
 Zbudowane z ❤️ przy użyciu darmowych narzędzi
 
 </div> ```
-🎯 Podsumowanie zmian
-Wyśrodkowany nagłówek z odznakami – profesjonalny wygląd od pierwszej sekundy.
-
-Tabele dla funkcji i stacku technologicznego – zamiast list, co znacznie ułatwia skanowanie wzrokiem.
-
-Diagram architektury w Mermaid – dynamiczny i estetyczny diagram renderowany przez GitHub.
-
-Sekcje <details> – schemat bazy danych jest ukryty, ale łatwo dostępny, dzięki czemu README jest bardziej zwięzły.
-
-Ujednolicone bloki kodu – z konkretnymi językami (bash, sql, python).
-
-Sekcja „Szybki start” – zwięzła i praktyczna, zamiast długich opisów.
-
-Ostrzeżenie GitHub Alert – > [!WARNING] dla ważnej informacji o Resend.
-
-Emoji w nagłówkach – wizualne upiększenie i lepsza nawigacja.
-
 ````
