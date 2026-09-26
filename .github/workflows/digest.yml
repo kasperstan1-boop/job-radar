@@ -4,7 +4,7 @@ on:
   schedule:
     # Codziennie o 07:00 UTC
     - cron: "0 7 * * *"
-  workflow_dispatch: # Pozwala ręcznie odpalić bota przyciskiem w panelu GitHuba
+  workflow_dispatch: # Pozwala ręcznie odpalić bota przyciskiem w panelu GitHub
 
 jobs:
   run-pipeline:
@@ -28,10 +28,10 @@ jobs:
 
       - name: Uruchomienie Job Radar
         run: python -m jobradar.pipeline
-      env:
-        RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
-        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+        env:
+          RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
