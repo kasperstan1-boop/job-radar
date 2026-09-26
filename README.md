@@ -2,7 +2,7 @@
 
 # 📡 Job Radar
 
-**Autonomiczny system monitoringu ofert pracy zdalnej z audytem jakościowym LLM.**
+**Autonomous remote job market monitoring with LLM-powered quality audit.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -16,49 +16,49 @@
 
 ---
 
-Job Radar codziennie skanuje 4 globalne portale pracy zdalnej, odsiewa duplikaty i oferty niepasujące, a następnie wykorzystuje **Google Gemini (LLM)** do audytu jakościowego każdego ogłoszenia — wykrywając ukryte call center, oprogramowanie szpiegujące i brak przejrzystości wynagrodzeń. Wyniki trafiają do spersonalizowanego raportu e-mail.
+Job Radar scans 4 global remote job boards every day, filters out duplicates and irrelevant offers, then uses **Google Gemini (LLM)** to perform a quality audit of each posting — detecting hidden call centers, surveillance software requirements, and lack of salary transparency. Results are delivered to a personalized email digest.
 
-> **💡 Filozofia projektu:** Filtrujemy oferty pod kątem **jakości życia pracownika zdalnego**, a nie tylko słów kluczowych. To jest nasze USP wobec LinkedIn i Indeed.
+> **💡 Project philosophy:** We filter job offers through the lens of **remote worker quality of life**, not just keywords. This is our USP against LinkedIn and Indeed.
 
-**[🚀 Szybki start](#-szybki-start) · [✨ Funkcje](#-funkcje) · [🏗️ Architektura](#️-architektura) · [📂 Struktura](#-struktura-projektu) · [📄 Licencja](#-licencja)**
-
----
-
-## 🎯 Problem, który rozwiązujemy
-
-Większość osób szukających pracy zdalnej traci godziny na ręcznym przeszukiwaniu ogłoszeń pełnych pułapek: ukrytych infolinii udających „asystentów", ofert bez stawek czy toksycznych firm wymagających instalacji oprogramowania szpiegującego na prywatnym komputerze.
-
-Job Radar automatyzuje ten proces i **eliminuje 90% szumu** — dostajesz tylko oferty, które spełniają Twoje kryteria jakościowe.
+**[🚀 Quick start](#-quick-start) · [✨ Features](#-features) · [🏗️ Architecture](#️-architecture) · [📂 Project structure](#-project-structure) · [📄 License](#-license)**
 
 ---
 
-## ✨ Funkcje
+## 🎯 The problem we solve
 
-### Unikalne filtry jakościowe (przewaga rynkowa)
+Most remote job seekers waste hours manually scanning listings full of traps: hidden call centers disguised as "assistants", offers with no salary range, or toxic companies requiring surveillance software on your personal computer.
 
-| Filtr                             | Opis                                                                                                                                                |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **📞 No-Phone Guarantee**         | LLM wykrywa manipulacje słowne maskujące call center („doskonała dykcja", „obsługa połączeń przychodzących", „dynamiczne środowisko telefoniczne"). |
-| **🛡️ Anti-Spyware & Async-First** | Wykrywanie wymogów instalacji oprogramowania monitorującego (Time Doctor, Hubstaff, screenshoty, keylogger, kamera).                                |
-| **💰 Przejrzystość stawek**       | Odrzucanie ofert bez jawnych widełek lub opartych o nieuczciwe formułki („wynagrodzenie zależne od zaangażowania").                                 |
-| **📅 Świeżość i geolokalizacja**  | Filtry wieku ofert (24h / 48h / 7 dni) i „Worldwide only".                                                                                          |
-
-### Reszta funkcji
-
-| Funkcja                             | Opis                                                                                    |
-| ----------------------------------- | --------------------------------------------------------------------------------------- |
-| **🌐 4 źródła danych**              | RemoteOK, Remotive, Jobicy, WeWorkRemotely (API + RSS).                                 |
-| **🔐 Bezhasłowy dostęp**            | Token `sec_...` w URL fragment, wymiana na `session_token` (httpOnly w sessionStorage). |
-| **⚙️ Panel konfiguracji WWW**       | 18 ról, 8 filtrów, widełki, blocklist, webhook Teams.                                   |
-| **🔄 Deduplikacja między-źródłowa** | Fingerprint SHA-256 z (firma\|tytuł\|lokalizacja\|widełki).                             |
-| **⚡ Cache LLM**                    | Te same oferty = 1 wywołanie Gemini (oszczędność limitów).                              |
-| **🔁 Fallback modeli**              | Automatyczne przełączanie przy 429/5xx.                                                 |
-| **📊 Sentry**                       | Opcjonalny monitoring błędów.                                                           |
-| **⏰ GitHub Actions**               | Cron 7:00 UTC codziennie + ręczne uruchamianie.                                         |
+Job Radar automates this process and **eliminates 90% of the noise** — you only receive offers that match your quality criteria.
 
 ---
 
-## 🏗️ Architektura
+## ✨ Features
+
+### Unique quality filters (market advantage)
+
+| Filter                             | Description                                                                                                                             |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **📞 No-Phone Guarantee**          | LLM detects linguistic manipulation masking call centers ("excellent diction", "handling incoming calls", "dynamic phone environment"). |
+| **🛡️ Anti-Spyware & Async-First**  | Detection of requirements to install monitoring software (Time Doctor, Hubstaff, screenshots, keylogger, webcam).                       |
+| **💰 Salary transparency**         | Rejection of offers without explicit salary ranges or based on unfair wording ("pay dependent on engagement").                          |
+| **📅 Freshness and geo-filtering** | Job age filters (24h / 48h / 7 days) and "Worldwide only".                                                                              |
+
+### Everything else
+
+| Feature                           | Description                                                                                   |
+| --------------------------------- | --------------------------------------------------------------------------------------------- |
+| **🌐 4 data sources**             | RemoteOK, Remotive, Jobicy, WeWorkRemotely (API + RSS).                                       |
+| **🔐 Passwordless access**        | `sec_...` token in URL fragment, exchanged for `session_token` (httpOnly via sessionStorage). |
+| **⚙️ Web configuration panel**    | 18 roles, 8 filters, salary range, blocklist, Teams webhook.                                  |
+| **🔄 Cross-source deduplication** | SHA-256 fingerprint of (company\|title\|location\|salary).                                    |
+| **⚡ LLM cache**                  | Same offers = 1 Gemini call (saves quota).                                                    |
+| **🔁 Model fallback**             | Automatic switch on 429/5xx errors.                                                           |
+| **📊 Sentry**                     | Optional error monitoring.                                                                    |
+| **⏰ GitHub Actions**             | Cron at 7:00 UTC daily + manual trigger.                                                      |
+
+---
+
+## 🏗️ Architecture
 
 ```mermaid
 flowchart TD
@@ -89,62 +89,62 @@ flowchart TD
     V --> X[config.html]
 ```
 
-**Stack technologiczny:**
+**Tech stack:**
 
-| Warstwa            | Technologia                                                                |
+| Layer              | Technology                                                                 |
 | ------------------ | -------------------------------------------------------------------------- |
 | **Backend**        | Python 3.12, `google-genai`, `supabase-py`, `resend`, `bleach`, `requests` |
-| **Baza danych**    | Supabase (PostgreSQL)                                                      |
+| **Database**       | Supabase (PostgreSQL)                                                      |
 | **Edge Functions** | Deno (TypeScript)                                                          |
 | **Frontend**       | HTML/CSS/JS (GitHub Pages)                                                 |
 | **LLM**            | Google Gemini (Flash-Lite, Flash, Pro)                                     |
-| **E-mail**         | Resend (REST API)                                                          |
+| **Email**          | Resend (REST API)                                                          |
 | **CI/CD**          | GitHub Actions (cron + manual)                                             |
-| **Monitoring**     | Sentry (opcjonalny)                                                        |
+| **Monitoring**     | Sentry (optional)                                                          |
 
 ---
 
-## 🚀 Szybki start
+## 🚀 Quick start
 
-### Wymagania
+### Requirements
 
 - **Python** 3.12+
-- **Konto Supabase** (free tier) — baza + Edge Functions
-- **Google AI Studio** (free tier) — klucz Gemini (`AQ.Ab8...` lub `AIzaSy...`)
-- **Resend** (free tier, 3000 maili/mies.) — wysyłka e-maili
-- **GitHub** — repo + Actions
+- **Supabase account** (free tier) — database + Edge Functions
+- **Google AI Studio** (free tier) — Gemini API key (`AQ.Ab8...` or `AIzaSy...`)
+- **Resend** (free tier, 3000 emails/month) — email delivery
+- **GitHub** — repository + Actions
 
-### Instalacja
+### Installation
 
 ```bash
-# 1. Klonowanie repo
+# 1. Clone the repository
 git clone https://github.com/kasperstan1-boop/job-radar.git
 cd job-radar
 
-# 2. Wirtualne środowisko
+# 2. Virtual environment
 python -m venv .venv
 .venv\Scripts\activate  # Windows
 source .venv/bin/activate  # Linux/macOS
 
-# 3. Zależności
+# 3. Dependencies
 pip install -r requirements.txt
 
-# 4. Konfiguracja Supabase (SQL Editor)
-# Uruchom skrypt SQL z sekcji "Schemat bazy danych" poniżej
+# 4. Supabase setup (SQL Editor)
+# Run the SQL script from the "Database schema" section below
 
 # 5. Edge Functions
-supabase link --project-ref <TWOJ-PROJECT-REF>
+supabase link --project-ref <YOUR-PROJECT-REF>
 supabase functions deploy api-profile
 supabase functions deploy api-session
 supabase functions deploy api-preferences
 supabase functions deploy api-reset-seen-jobs
 
-# 6. Uruchomienie pipeline'u
+# 6. Run the pipeline
 python -m jobradar.pipeline
 ```
 
 <details>
-<summary>📋 <strong>Schemat bazy danych (kliknij, aby rozwinąć)</strong></summary>
+<summary>📋 <strong>Database schema (click to expand)</strong></summary>
 
 ```sql
 -- user_profiles
@@ -203,65 +203,65 @@ create table llm_cache (
 
 </details>
 
-### Konfiguracja
+### Configuration
 
 ```bash
 cp .env.example .env
 ```
 
-Uzupełnij `.env`:
+Fill in `.env`:
 
-| Zmienna                | Opis                                         | Gdzie znaleźć                                             |
-| ---------------------- | -------------------------------------------- | --------------------------------------------------------- |
-| `SUPABASE_URL`         | `https://<ref>.supabase.co`                  | Supabase → Settings → API                                 |
-| `SUPABASE_SERVICE_KEY` | `sb_secret_...` (nowy) lub `eyJ...` (legacy) | Supabase → Settings → API                                 |
-| `GEMINI_API_KEY`       | `AQ.Ab8...` lub `AIzaSy...`                  | [aistudio.google.com](https://aistudio.google.com/apikey) |
-| `RESEND_API_KEY`       | `re_...`                                     | [resend.com/api-keys](https://resend.com/api-keys)        |
-| `NOTIFICATION_EMAIL`   | Twój e-mail (zweryfikowany w Resend)         | —                                                         |
-| `TEAMS_WEBHOOK_URL`    | opcjonalny webhook Teams                     | Teams → Workflows                                         |
-| `SENTRY_DSN`           | opcjonalny monitoring błędów                 | [sentry.io](https://sentry.io)                            |
+| Variable               | Description                                | Where to find                                             |
+| ---------------------- | ------------------------------------------ | --------------------------------------------------------- |
+| `SUPABASE_URL`         | `https://<ref>.supabase.co`                | Supabase → Settings → API                                 |
+| `SUPABASE_SERVICE_KEY` | `sb_secret_...` (new) or `eyJ...` (legacy) | Supabase → Settings → API                                 |
+| `GEMINI_API_KEY`       | `AQ.Ab8...` or `AIzaSy...`                 | [aistudio.google.com](https://aistudio.google.com/apikey) |
+| `RESEND_API_KEY`       | `re_...`                                   | [resend.com/api-keys](https://resend.com/api-keys)        |
+| `NOTIFICATION_EMAIL`   | Your email (verified in Resend)            | —                                                         |
+| `TEAMS_WEBHOOK_URL`    | optional Teams webhook                     | Teams → Workflows                                         |
+| `SENTRY_DSN`           | optional error monitoring                  | [sentry.io](https://sentry.io)                            |
 
 > [!WARNING]
-> W darmowym planie Resend, bez własnej domeny, można wysyłać e-maile **tylko na adres, którym zarejestrowałeś konto Resend**.
+> In the free Resend tier without your own domain, you can only send emails **to the address you registered your Resend account with**.
 
 ---
 
-## 📂 Struktura projektu
+## 📂 Project structure
 
 ```text
 job-radar/
 ├── .github/workflows/digest.yml     # GitHub Actions cron
 ├── frontend/
-│   ├── index.html                   # Panel rejestracji + konfiguracji
-│   └── config.html                  # Przekierowanie z linku mailowego
+│   ├── index.html                   # Registration + configuration panel
+│   └── config.html                  # Redirect from email link
 ├── jobradar/
-│   ├── config.py                    # Zmienne środowiskowe, stałe
-│   ├── fingerprint.py               # SHA-256 dedup
-│   ├── filters.py                   # 8 filtrów twardych
-│   ├── llm.py                       # Gemini + fallback modeli
+│   ├── config.py                    # Environment variables, constants
+│   ├── fingerprint.py               # SHA-256 deduplication
+│   ├── filters.py                   # 8 hard filters
+│   ├── llm.py                       # Gemini + model fallback
 │   ├── prompt.py                    # Prompt + response_schema
-│   ├── digest.py                    # Generator HTML + plain text
+│   ├── digest.py                    # HTML + plain text generator
 │   ├── notifier.py                  # Resend + Teams webhook
-│   ├── db.py                        # Klient Supabase
-│   ├── pipeline.py                  # Orkiestrator
+│   ├── db.py                        # Supabase client
+│   ├── pipeline.py                  # Orchestrator
 │   └── sources/
-│       ├── remoteok.py              # Publiczne API JSON
-│       ├── remotive.py              # Publiczne API JSON
-│       ├── jobicy.py                # Publiczne API JSON
-│       └── wwr.py                   # Kanały RSS
+│       ├── remoteok.py              # Public JSON API
+│       ├── remotive.py              # Public JSON API
+│       ├── jobicy.py                # Public JSON API
+│       └── wwr.py                   # RSS feeds
 ├── supabase/functions/
-│   ├── api-profile/index.ts         # Rejestracja + mail weryfikacyjny
-│   ├── api-session/index.ts         # Wymiana token → session_token
-│   ├── api-preferences/index.ts     # GET/PUT preferencji
-│   └── api-reset-seen-jobs/index.ts # Reset historii
+│   ├── api-profile/index.ts         # Registration + verification email
+│   ├── api-session/index.ts         # Token → session_token exchange
+│   ├── api-preferences/index.ts     # GET/PUT preferences
+│   └── api-reset-seen-jobs/index.ts # History reset
 ├── tests/
-│   ├── test_fingerprint.py          # Test dedup
-│   ├── test_filters.py              # Test filtrów (6 przypadków)
-│   ├── test_all_sources.py          # Test 4 scraperów
-│   └── eval_dataset/                # Golden Dataset (20 ofert)
+│   ├── test_fingerprint.py          # Dedup test
+│   ├── test_filters.py              # Filter tests (6 cases)
+│   ├── test_all_sources.py          # 4 scrapers test
+│   └── eval_dataset/                # Golden Dataset (20 offers)
 ├── examples/
-│   ├── digest_example.html          # Przykładowy raport (HTML)
-│   └── digest_example.png           # Screenshot raportu
+│   ├── digest_example.html          # Sample report (HTML)
+│   └── digest_example.png           # Report screenshot
 ├── .env.example
 ├── requirements.txt
 └── README.md
@@ -269,33 +269,33 @@ job-radar/
 
 ---
 
-## 📄 Przykładowy digest
+## 📄 Sample digest
 
-Job Radar wysyła codziennie spersonalizowany raport HTML. Każda oferta zawiera ocenę LLM (0–100%), 2-zdaniowe podsumowanie i czerwone flagi.
+Job Radar sends a personalized HTML report every day. Each offer includes an LLM score (0–100%), a 2-sentence summary, and red flags.
 
-![Przykładowy digest](examples/digest_example.png)
+![Sample digest](examples/digest_example.png)
 
-> Pełny HTML znajdziesz w [`examples/digest_example.html`](examples/digest_example.html).
+> The full HTML file is available at [`examples/digest_example.html`](examples/digest_example.html).
 
 ---
 
-## 🧪 Testy i ewaluacja
+## 🧪 Tests and evaluation
 
 ```bash
-# Testy jednostkowe
+# Unit tests
 python -m tests.test_fingerprint
 python -m tests.test_filters
 python -m tests.test_all_sources
 
-# Ewaluacja promptu (Golden Dataset — 20 ofert)
+# Prompt evaluation (Golden Dataset — 20 offers)
 python -m tests.eval_dataset.eval_prompts
 python -m tests.eval_dataset.eval_prompts --verbose
 python -m tests.eval_dataset.eval_prompts --threshold 0.90
 ```
 
-**Metryki (ostatni run):**
+**Metrics (latest run):**
 
-| Filtr              | Precision | Recall | F1    |
+| Filter             | Precision | Recall | F1    |
 | ------------------ | --------- | ------ | ----- |
 | No-Phone Guarantee | **100%**  | 100%   | 100%  |
 | Async-Friendly     | **100%**  | 90%    | 94.7% |
@@ -303,31 +303,31 @@ python -m tests.eval_dataset.eval_prompts --threshold 0.90
 
 ---
 
-## 💰 Koszty
+## 💰 Costs
 
-Wszystko w darmowych planach:
+Everything runs on free tiers:
 
-| Usługa                  | Limit free tier       | Wykorzystanie |
-| ----------------------- | --------------------- | ------------- |
-| GitHub Actions          | 2000 min/mies.        | ~5 min/dzień  |
-| Supabase (baza)         | 500 MB, 2 GB transfer | <10 MB        |
-| Supabase Edge Functions | 500k wywołań/mies.    | ~30/dzień     |
-| Google Gemini           | 15 RPM, 500–1500 RPD  | ~31/dzień     |
-| Resend                  | 3000 maili/mies.      | 1/dzień       |
-| GitHub Pages            | unlimited             | —             |
+| Service                 | Free tier limit        | Usage      |
+| ----------------------- | ---------------------- | ---------- |
+| GitHub Actions          | 2000 min/month         | ~5 min/day |
+| Supabase (database)     | 500 MB, 2 GB transfer  | <10 MB     |
+| Supabase Edge Functions | 500k invocations/month | ~30/day    |
+| Google Gemini           | 15 RPM, 500–1500 RPD   | ~31/day    |
+| Resend                  | 3000 emails/month      | 1/day      |
+| GitHub Pages            | unlimited              | —          |
 
-**Koszt miesięczny: 0,00 USD.**
+**Monthly cost: $0.00 USD.**
 
 ---
 
-## 📄 Licencja
+## 📄 License
 
-MIT — używaj, modyfikuj, sprzedawaj. Kod dostarczony bez gwarancji.
+MIT — use it, modify it, sell it. Code provided without warranty.
 
 ---
 
 <div align="center">
 
-**Zbudowane z ❤️ przy użyciu darmowych narzędzi**
+**Built with ❤️ using free tools**
 
 </div>
