@@ -1,146 +1,126 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  "Access-Control-Allow-Origin": "https://kasperstan1-boop.github.io",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+};
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
 
   try {
-    const { email } = await req.json()
-    if (!email || !email.includes('@')) {
-      return new Response(JSON.stringify({ error: "Podaj prawidłowy adres e-mail." }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      })
+    // ── 1. Wyciągnij session_token z Authorization ──
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return Response.json(
+        { error: "Brak autoryzacji" },
+        { status: 401, headers: corsHeaders }
+      );
     }
+    const sessionToken = authHeader.substring(7);
+
+    // ── 2. Hashuj i znajdź sesję ──
+    const encoder = new TextEncoder();
+    const hashBuffer = await crypto.subtle.digest(
+      "SHA-256",
+      encoder.encode(sessionToken)
+    );
+    const sessionHash = Array.from(new Uint8Array(hashBuffer), (b) =>
+      b.toString(16).padStart(2, "0")
+    ).join("");
 
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
 
-    // Generujemy bezpieczny token (32 bajty losowości)
-    const randomBytes = new Uint8Array(24)
-    crypto.getRandomValues(randomBytes)
-    const token = "sec_" + Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('')
+    const { data: session, error: sessionError } = await supabase
+      .from("user_sessions")
+      .select("user_id, expires_at")
+      .eq("session_token_hash", sessionHash)
+      .maybeSingle();
 
-    // Hashujemy token do bazy (SHA-256)
-    const encoder = new TextEncoder()
-    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(token))
-    const tokenHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
-
-    // Domyślne preferencje zgodne z sekcją 5.2 dokumentacji
-    const defaultPreferences = {
-      roles: {
-        selected: ["ai_model_trainer", "python_scraper", "async_chat_support"],
-        custom_tags: [],
-        match_mode: "any"
-      },
-      strict_no_phone: true,
-      async_first_no_spyware: true,
-      organization_type: ["any"],
-      experience_level: ["any"],
-      ignore_degree_requirement: true,
-      salary: {
-        enabled: false,
-        min_annual_usd: null,
-        min_hourly_usd: null,
-        require_disclosed: false
-      },
-      freshness_hours: 24,
-      geo: {
-        remote_worldwide_only: true,
-        excluded_regions: []
-      },
-      language: {
-        offer_languages: ["en"],
-        require_english_ok: true
-      },
-      blocklist: {
-        companies: [],
-        keywords: []
-      },
-      allowlist: {
-        companies: []
-      },
-      notifications: {
-        digest_hour_utc: 7,
-        max_jobs_per_digest: 25,
-        format: "html",
-        email_enabled: true,
-        teams_webhook_url: null,
-        slack_webhook_url: null
-      }
+    if (sessionError || !session) {
+      return Response.json(
+        { error: "Nieprawidłowa sesja" },
+        { status: 401, headers: corsHeaders }
+      );
     }
 
-    const cleanEmail = email.trim().toLowerCase()
-
-    // Sprawdzamy, czy profil istnieje
-    const { data: existingUser } = await supabase
-      .from('user_profiles')
-      .select('id')
-      .eq('email', cleanEmail)
-      .maybeSingle()
-
-    if (existingUser) {
-      await supabase
-        .from('user_profiles')
-        .update({
-          config_token_hash: tokenHash,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', existingUser.id)
-    } else {
-      await supabase
-        .from('user_profiles')
-        .insert({
-          email: cleanEmail,
-          config_token_hash: tokenHash,
-          email_verified: true,
-          preferences: defaultPreferences
-        })
+    if (new Date(session.expires_at) < new Date()) {
+      return Response.json(
+        { error: "Sesja wygasła" },
+        { status: 401, headers: corsHeaders }
+      );
     }
 
-    const loginUrl = `https://kasperstan1-boop.github.io/job-radar/index.html#token=${token}`
-    const resendApiKey = Deno.env.get('RESEND_API_KEY')
-    let emailSent = false
+    const userId = session.user_id;
 
-    if (resendApiKey) {
+    // ── 3. GET → zwróć preferencje ──
+    if (req.method === "GET") {
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("preferences")
+        .eq("id", userId)
+        .maybeSingle();
+
+      return Response.json(
+        { preferences: profile?.preferences || {} },
+        { headers: corsHeaders }
+      );
+    }
+
+    // ── 4. PUT → zapisz preferencje ──
+    if (req.method === "PUT") {
+      let body: { preferences?: unknown };
       try {
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${resendApiKey}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            from: 'Job Radar <onboarding@resend.dev>',
-            to: [cleanEmail],
-            subject: 'Twój klucz dostępu do Job Radar',
-            html: `<h2>Witaj w Job Radar!</h2><p>Twój link do panelu sterowania:</p><p><a href="${loginUrl}">Kliknij tutaj, aby otworzyć panel</a></p><p>Twój klucz: <code>${token}</code></p>`
-          })
-        })
-        emailSent = true
-      } catch (_) {
-        // Fallback w razie braku aktywnej wysyłki
+        body = await req.json();
+      } catch {
+        return Response.json(
+          { error: "Nieprawidłowy JSON" },
+          { status: 400, headers: corsHeaders }
+        );
       }
+
+      const preferences = body.preferences;
+      if (!preferences || typeof preferences !== "object") {
+        return Response.json(
+          { error: "Brak pola preferences" },
+          { status: 400, headers: corsHeaders }
+        );
+      }
+
+      const { error: updateError } = await supabase
+        .from("user_profiles")
+        .update({
+          preferences,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", userId);
+
+      if (updateError) {
+        return Response.json(
+          { error: updateError.message },
+          { status: 500, headers: corsHeaders }
+        );
+      }
+
+      return Response.json({ success: true }, { headers: corsHeaders });
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      token: token,
-      email_sent: emailSent,
-      login_url: loginUrl,
-      message: "Profil został skonfigurowany. Możesz przejść do panelu lub pobrać plik klucza."
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    return Response.json(
+      { error: "Method not allowed" },
+      { status: 405, headers: corsHeaders }
+    );
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    return Response.json(
+      { error: (e as Error).message },
+      { status: 500, headers: corsHeaders }
+    );
   }
-})
+});

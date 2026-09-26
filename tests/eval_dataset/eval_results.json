@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-26T09:40:13.568504+00:00",
+  "timestamp": "2026-09-26T16:10:11.092477+00:00",
   "dataset": {
     "path": "I:\\gra testy\\Job Radar\\job-radar\\tests\\eval_dataset\\eval_jobs.json",
-    "jobs_count": 4,
+    "jobs_count": 20,
     "errors_count": 0
   },
   "threshold": 0.95,
@@ -12,33 +12,33 @@
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "tp": 3,
+      "tp": 13,
       "fp": 0,
       "fn": 0,
-      "tn": 1,
-      "support": 4
+      "tn": 7,
+      "support": 20
     },
-    "anti_spyware": {
-      "accuracy": 0.75,
-      "precision": 0.6666666666666666,
-      "recall": 1.0,
-      "f1": 0.8,
-      "tp": 2,
-      "fp": 1,
-      "fn": 0,
-      "tn": 1,
-      "support": 4
+    "async_friendly": {
+      "accuracy": 0.95,
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1": 0.9473684210526316,
+      "tp": 9,
+      "fp": 0,
+      "fn": 1,
+      "tn": 10,
+      "support": 20
     },
     "salary_disclosed": {
       "accuracy": 1.0,
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "tp": 3,
+      "tp": 18,
       "fp": 0,
       "fn": 0,
-      "tn": 1,
-      "support": 4
+      "tn": 2,
+      "support": 20
     }
   },
   "per_job": [
@@ -54,12 +54,7 @@
         "is_async_friendly": true,
         "salary_disclosed": true
       },
-      "llm_raw": {
-        "score": 100,
-        "summary": "Oferta dotyczy stanowiska programisty Python w pełni zdalnym i asynchronicznym modelu pracy. Nie zawiera żadnych sygnałów świadczących o inwigilacji, konieczności obsługi telefonów czy braku transparentności płacowej.",
-        "phone_signals": [],
-        "spyware_signals": []
-      }
+      "llm_raw": null
     },
     {
       "id": 2,
@@ -70,18 +65,10 @@
       },
       "predicted": {
         "is_no_phone": false,
-        "is_async_friendly": true,
+        "is_async_friendly": false,
         "salary_disclosed": true
       },
-      "llm_raw": {
-        "score": 30,
-        "summary": "Oferta dotyczy pracy w zespole wsparcia na stanowisku wymagającym ciągłej obsługi połączeń telefonicznych od klientów. Głównymi zastrzeżeniami są praca na słuchawce, sztywne godziny oraz brak elastyczności asynchronicznej.",
-        "phone_signals": [
-          "odbierając połączenia przychodzące od naszych klientów",
-          "40 godzin w tygodniu na słuchawce"
-        ],
-        "spyware_signals": []
-      }
+      "llm_raw": null
     },
     {
       "id": 3,
@@ -95,14 +82,7 @@
         "is_async_friendly": false,
         "salary_disclosed": true
       },
-      "llm_raw": {
-        "score": 55,
-        "summary": "Oferta dotyczy stanowiska asystentki wirtualnej z wynagrodzeniem 4000 PLN netto. Głównym zastrzeżeniem jest wymóg inwazyjnego oprogramowania monitorującego aktywność pracownika.",
-        "phone_signals": [],
-        "spyware_signals": [
-          "wymagamy instalacji oprogramowania Time Doctor z włączoną funkcją zrzutów ekranu i śledzenia aktywności klawiatury"
-        ]
-      }
+      "llm_raw": null
     },
     {
       "id": 4,
@@ -116,12 +96,231 @@
         "is_async_friendly": true,
         "salary_disclosed": false
       },
-      "llm_raw": {
-        "score": 85,
-        "summary": "Oferta dotyczy stanowiska Senior DevOps Engineer z naciskiem na pracę tekstową. Głównym zastrzeżeniem jest brak jawnych widełek płacowych w ogłoszeniu.",
-        "phone_signals": [],
-        "spyware_signals": []
-      }
+      "llm_raw": null
+    },
+    {
+      "id": 5,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 6,
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 7,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 8,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 9,
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": false
+      },
+      "predicted": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": false
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 10,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 11,
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 12,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 13,
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 14,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 15,
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 16,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 17,
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 18,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 19,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
+    },
+    {
+      "id": 20,
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      },
+      "predicted": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      },
+      "llm_raw": null
     }
   ]
 }

@@ -1,46 +1,107 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  "Access-Control-Allow-Origin": "https://kasperstan1-boop.github.io",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+};
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-  if (req.method !== 'DELETE') return new Response("Method not allowed", { status: 405 })
+  // Preflight
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  if (req.method !== "DELETE") {
+    return Response.json(
+      { error: "Method not allowed" },
+      { status: 405, headers: corsHeaders }
+    );
+  }
 
   try {
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader?.startsWith('Bearer ')) throw new Error("Unauthorized")
-    const sessionToken = authHeader.replace('Bearer ', '')
+    // ── 1. Wyciągnij session_token ──
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return Response.json(
+        { error: "Brak autoryzacji" },
+        { status: 401, headers: corsHeaders }
+      );
+    }
+    const sessionToken = authHeader.substring(7);
+
+    // ── 2. Hashuj i znajdź sesję ──
+    const encoder = new TextEncoder();
+    const hashBuffer = await crypto.subtle.digest(
+      "SHA-256",
+      encoder.encode(sessionToken)
+    );
+    const sessionTokenHash = Array.from(new Uint8Array(hashBuffer), (b) =>
+      b.toString(16).padStart(2, "0")
+    ).join("");
 
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
 
-    const encoder = new TextEncoder()
-    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(sessionToken))
-    const sessionTokenHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
+    const { data: session, error: sessionError } = await supabase
+      .from("user_sessions")
+      .select("user_id, expires_at")
+      .eq("session_token_hash", sessionTokenHash)
+      .maybeSingle();
 
-    const { data: session } = await supabase.from('user_sessions').select('user_id').eq('session_token_hash', sessionTokenHash).single()
-    if (!session) throw new Error("Unauthorized")
-
-    // Pobieramy powiązany token_hash użytkownika z profilu
-    const { data: profile } = await supabase.from('user_profiles').select('config_token_hash').eq('id', session.user_id).single()
-
-    if (profile) {
-      // Usuwamy historię seen_jobs dla tego profilu
-      await supabase.from('seen_jobs').delete().eq('token_hash', profile.config_token_hash)
+    if (sessionError || !session) {
+      return Response.json(
+        { error: "Nieprawidłowa sesja" },
+        { status: 401, headers: corsHeaders }
+      );
     }
 
-    return new Response(JSON.stringify({ success: true, message: "Reset zakończony" }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    if (new Date(session.expires_at) < new Date()) {
+      return Response.json(
+        { error: "Sesja wygasła" },
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
+    // ── 3. Pobierz config_token_hash użytkownika ──
+    const { data: profile, error: profileError } = await supabase
+      .from("user_profiles")
+      .select("config_token_hash")
+      .eq("id", session.user_id)
+      .maybeSingle();
+
+    if (profileError || !profile) {
+      return Response.json(
+        { error: "Nie znaleziono profilu" },
+        { status: 404, headers: corsHeaders }
+      );
+    }
+
+    // ── 4. Usuń historię seen_jobs dla tego użytkownika ──
+    const { error: deleteError } = await supabase
+      .from("seen_jobs")
+      .delete()
+      .eq("token_hash", profile.config_token_hash);
+
+    if (deleteError) {
+      return Response.json(
+        { error: deleteError.message },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+
+    return Response.json(
+      { success: true, message: "Reset zakończony" },
+      { headers: corsHeaders }
+    );
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
-      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    return Response.json(
+      { error: (e as Error).message },
+      { status: 500, headers: corsHeaders }
+    );
   }
-})
+});

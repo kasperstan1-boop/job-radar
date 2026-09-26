@@ -399,7 +399,12 @@
         <label class="checkbox-label"
           ><input type="checkbox" id="email-enabled" /> Wysyłaj raport
           e-mail</label
-        >
+        ><label>Świeżość ofert</label>
+        <select id="freshness-hours">
+          <option value="24">Ostatnie 24 godziny</option>
+          <option value="48">Ostatnie 48 godzin</option>
+          <option value="168" selected>Ostatnie 7 dni</option>
+        </select>
         <label>Teams Adaptive Cards Webhook URL</label>
         <input type="text" id="teams-webhook" placeholder="https://..." />
         <label>Slack Webhook URL</label>
@@ -570,6 +575,8 @@
         document.getElementById("require-disclosed").checked =
           !!salary.require_disclosed;
         toggleSalaryInputs();
+        document.getElementById("freshness-hours").value =
+          p.freshness_hours || 168;
         const notif = p.notifications || {};
         document.getElementById("digest-hour").value =
           notif.digest_hour_utc ?? 7;
@@ -617,7 +624,8 @@
             require_disclosed:
               document.getElementById("require-disclosed").checked,
           },
-          freshness_hours: 24,
+          freshness_hours:
+            parseInt(document.getElementById("freshness-hours").value) || 168,
           geo: { remote_worldwide_only: true, excluded_regions: [] },
           language: { offer_languages: ["en"], require_english_ok: true },
           blocklist: { companies: [], keywords: [] },

@@ -2,9 +2,9 @@
 eval_prompts.py — Ewaluacja promptu LLM dla Job Radar.
 
 Uruchomienie:
-    python tests/eval_dataset/eval_prompts.py
-    python tests/eval_dataset/eval_prompts.py --verbose
-    python tests/eval_dataset/eval_prompts.py --threshold 0.90
+    python -m tests.eval_dataset.eval_prompts
+    python -m tests.eval_dataset.eval_prompts --verbose
+    python -m tests.eval_dataset.eval_prompts --threshold 0.90
 
 Wyjście:
     - Wydruk metryk w terminalu (Accuracy, Precision, Recall, F1 dla 3 filtrów).
@@ -20,8 +20,8 @@ import os
 import sys
 from datetime import datetime, timezone
 
-# Import analyze_job z projektu. Jeśli uruchamiasz z innego katalogu,
-# upewnij się, że root projektu jest w PYTHONPATH.
+# Import analyze_job z projektu. Uruchamiaj jako moduł z root projektu:
+#   python -m tests.eval_dataset.eval_prompts
 from jobradar.llm import analyze_job
 
 
@@ -82,12 +82,13 @@ def extract_fields(result: dict | None) -> dict:
       - None / pusty dict → zwraca bezpieczne wartości domyślne
 
     Zwraca dict z kluczami:
-      phone_signals, spyware_signals, salary_disclosed, score, summary
+      phone_signals, spyware_signals, salary_disclosed, async_friendly, score, summary
     """
     safe_default = {
         "phone_signals": [],
         "spyware_signals": [],
         "salary_disclosed": False,
+        "async_friendly": False,
         "score": None,
         "summary": None,
     }
@@ -99,11 +100,12 @@ def extract_fields(result: dict | None) -> dict:
     payload = result.get("result") if isinstance(result.get("result"), dict) else result
 
     return {
-        "phone_signals":   payload.get("phone_signals")   or [],
-        "spyware_signals": payload.get("spyware_signals") or [],
+        "phone_signals":    payload.get("phone_signals")   or [],
+        "spyware_signals":  payload.get("spyware_signals") or [],
         "salary_disclosed": bool(payload.get("salary_disclosed", False)),
-        "score":   payload.get("score"),
-        "summary": payload.get("summary"),
+        "async_friendly":   bool(payload.get("async_friendly", False)),
+        "score":            payload.get("score"),
+        "summary":          payload.get("summary"),
     }
 
 
@@ -155,9 +157,12 @@ def run_eval(threshold: float = 0.95, verbose: bool = False) -> int:
 
         print(f"Analizuję ofertę ID: {job_id}...", end=" ")
 
-        # analyze_job przyjmuje string (zgodnie z sygnaturą w llm.py)
         try:
-            raw_result = analyze_job({"description": text, "title": "Brak", "company": "Brak"})
+            raw_result = analyze_job({
+                "description": text,
+                "title": "Brak",
+                "company": "Brak",
+            })
             fields = extract_fields(raw_result)
             print("OK")
         except Exception as e:
@@ -166,16 +171,17 @@ def run_eval(threshold: float = 0.95, verbose: bool = False) -> int:
             fields = extract_fields(None)
 
         # ── Filtr 1: No-Phone ──
-        # is_no_phone = True → oczekujemy ZERO sygnałów telefonicznych
+        # is_no_phone=True → oczekujemy ZERO sygnałów telefonicznych
         has_no_phone = len(fields["phone_signals"]) == 0
         y_true_phone.append(bool(gt.get("is_no_phone", False)))
         y_pred_phone.append(has_no_phone)
 
-        # ── Filtr 2: Anti-Spyware ──
-        # is_async_friendly = True → oczekujemy ZERO sygnałów spyware
-        has_no_spyware = len(fields["spyware_signals"]) == 0
+        # ── Filtr 2: Async-Friendly ──
+        # is_async_friendly=True → oczekujemy, że LLM ustawi async_friendly=True
+        # (LLM decyduje o PEŁNEJ asynchronii: brak telefonu + brak spyware
+        #  + brak stałych godzin + brak obowiązkowych Zoom/Meet)
         y_true_async.append(bool(gt.get("is_async_friendly", False)))
-        y_pred_async.append(has_no_spyware)
+        y_pred_async.append(fields["async_friendly"])
 
         # ── Filtr 3: Salary disclosed ──
         y_true_salary.append(bool(gt.get("salary_disclosed", False)))
@@ -187,7 +193,7 @@ def run_eval(threshold: float = 0.95, verbose: bool = False) -> int:
             "ground_truth": gt,
             "predicted": {
                 "is_no_phone": has_no_phone,
-                "is_async_friendly": has_no_spyware,
+                "is_async_friendly": fields["async_friendly"],
                 "salary_disclosed": fields["salary_disclosed"],
             },
             "llm_raw": {
@@ -195,6 +201,7 @@ def run_eval(threshold: float = 0.95, verbose: bool = False) -> int:
                 "summary": fields["summary"],
                 "phone_signals": fields["phone_signals"],
                 "spyware_signals": fields["spyware_signals"],
+                "async_friendly": fields["async_friendly"],
             } if verbose else None,
         })
 
@@ -207,7 +214,7 @@ def run_eval(threshold: float = 0.95, verbose: bool = False) -> int:
     print("WYNIKI EWALUACJI")
     print("=" * 60)
     print_metrics("No-Phone Guarantee", metrics_phone,  verbose)
-    print_metrics("Anti-Spyware",       metrics_async,  verbose)
+    print_metrics("Async-Friendly",     metrics_async,  verbose)
     print_metrics("Salary Disclosed",   metrics_salary, verbose)
 
     if errors > 0:
@@ -224,7 +231,7 @@ def run_eval(threshold: float = 0.95, verbose: bool = False) -> int:
         "threshold": threshold,
         "metrics": {
             "no_phone":        metrics_phone,
-            "anti_spyware":    metrics_async,
+            "async_friendly":  metrics_async,
             "salary_disclosed": metrics_salary,
         },
         "per_job": per_job_results,
@@ -237,7 +244,7 @@ def run_eval(threshold: float = 0.95, verbose: bool = False) -> int:
     # ── Decyzja PASS / FAIL ──
     failed_filters = []
     if metrics_phone["precision"]  < threshold: failed_filters.append("No-Phone")
-    if metrics_async["precision"]  < threshold: failed_filters.append("Anti-Spyware")
+    if metrics_async["precision"]  < threshold: failed_filters.append("Async-Friendly")
     if metrics_salary["precision"] < threshold: failed_filters.append("Salary Disclosed")
 
     print("\n" + "=" * 60)

@@ -14,10 +14,40 @@ Rubryka oceny:
 - -5 pkt za każdą inną czerwoną flagę, maks. -20 pkt.
 - Score zawsze 0-100.
 
-Definicje:
+═══════════════════════════════════════════════════════════════
+DEFINICJA async_friendly (PRZECZYTAJ UWAŻNIE):
+
+async_friendly = true TYLKO jeśli oferta spełnia WSZYSTKIE poniższe:
+  1. phone_signals jest PUSTE (brak telefonu).
+  2. spyware_signals jest PUSTE (brak inwigilacji).
+  3. W opisie NIE MA: "praca zmianowa", "zmiany", "stałe godziny", "dyżury",
+     "on-call", "gotowość", "obowiązkowe spotkania", "codzienne spotkania",
+     "wideokonferencje", "Zoom", "Google Meet", "real-time chat".
+
+Jeśli KTÓRYKOLWIEK z powyższych występuje → async_friendly = false.
+
+WAŻNE ROZRÓŻNIENIE:
+  - "komunikacja przez Slack / Teams / e-mail / GitHub Issues" → to NIE jest
+    real-time chat. To narzędzia asynchroniczne. async_friendly może być true.
+  - "real-time chat", "instant messaging", "natychmiastowa odpowiedź",
+    "obowiązkowa obecność na czacie" → to JEST real-time chat. async_friendly = false.
+
+═══════════════════════════════════════════════════════════════
+WERYFIKACJA PRZED ZWRÓCENIEM JSON (WYKONAJ KROK PO KROKU):
+
+  Krok 1: Wypełnij phone_signals i spyware_signals.
+  Krok 2: Jeśli phone_signals NIE jest puste → async_friendly = false.
+  Krok 3: Jeśli spyware_signals NIE jest puste → async_friendly = false.
+  Krok 4: Przeszukaj opis pod kątem słów z punktu 3 definicji.
+          Jeśli któreś występuje → async_friendly = false.
+  Krok 5: Sprawdź, czy słowa ze Kroku 4 nie są w kontekście "opcjonalne",
+          "elastyczne", "do uzgodnienia". Jeśli są opcjonalne → nie liczą się.
+  Krok 6: Dopiero teraz ustaw ostateczną wartość async_friendly.
+═══════════════════════════════════════════════════════════════
+
+Definicje pól:
 - phone_signals: tylko jawne wymagania obsługi telefonów/połączeń. Sama informacja "kontakt telefoniczny" to nie sygnał.
-- spyware_signals: jawne wymagania monitoringu naruszającego prywatność. Time Doctor/Hubstaff tylko jeśli wiążą się ze zrzutami ekranu, kamerą, keyloggerem, GPS lub ciągłą kontrolą. Zwykły time tracker bez inwigilacji -> red_flags.
-- async_friendly: true tylko gdy brak stałych godzin, obowiązkowych calli, Zoomów, real-time chat i telefonu.
+- spyware_signals: jawne wymagania monitoringu naruszającego prywatność. Time Doctor/Hubstaff tylko jeśli wiążą się ze zrzutami ekranu, kamerą, keyloggerem, GPS lub ciągłą kontrolą. Zwykły time tracker bez inwigilacji → red_flags.
 - salary_disclosed: true tylko gdy podano konkretną kwotę lub widełki.
 - salary_range: dokładny cytat/kwota/widełki; null jeśli brak.
 

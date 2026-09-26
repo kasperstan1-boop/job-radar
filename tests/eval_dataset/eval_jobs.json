@@ -1,4 +1,7 @@
 {
+  "description": "Zestaw testowy 20 ofert do walidacji skuteczności modelu LLM. 11 ofert async-friendly + 9 ofert z ukrytą słuchawką/spyware/stałymi godzinami. Etykiety ręcznie zweryfikowane.",
+  "version": "2.0",
+  "last_updated": "2026-09-26",
   "jobs": [
     {
       "id": 1,
@@ -34,6 +37,150 @@
         "is_no_phone": true,
         "is_async_friendly": true,
         "salary_disclosed": false
+      }
+    },
+    {
+      "id": 5,
+      "text": "Poszukujemy Data Annotation Specialist do projektu AI. Zadanie polega na ocenie jakości odpowiedzi modelu językowego. Praca w pełni asynchroniczna, bez spotkań. Stawka: 25-35 USD/h. Wymagana znajomość angielskiego na poziomie C1.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 6,
+      "text": "Customer Support Representative - Remote. Obsługa klientów przez telefon, czat i email. Musisz mieć doskonałą dykcję oraz doświadczenie w pracy z klientem przez telefon. Praca zmianowa 8h. Wynagrodzenie: 4500 PLN brutto.",
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 7,
+      "text": "Technical Writer potrzebny do projektu open-source. Tworzenie dokumentacji API, przewodników i tutoriali. Cała komunikacja przez GitHub Issues i PR. Stawka: 80-100 PLN/h. Praca w pełni zdalna.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 8,
+      "text": "Content Moderator (Polish). Przegląd i moderacja treści w serwisie społecznościowym. Praca zmianowa z elastycznym grafikiem. Wymagane doświadczenie w moderacji oraz obsługa zgłoszeń przez system ticketowy. Wynagrodzenie: 4200 PLN brutto.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 9,
+      "text": "Do naszego zespołu poszukujemy osoby na stanowisko Call Center Agent. Praca zdalna, kontakt z klientami wyłącznie telefonicznie. Oferujemy atrakcyjne wynagrodzenie zależne od zaangażowania oraz nieograniczony potencjał prowizyjny.",
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": false
+      }
+    },
+    {
+      "id": 10,
+      "text": "Junior Python Developer. Budowa scraperów i automatyzacja przepływu danych. Praca zdalna, komunikacja przez Slack i e-mail. Widełki: 6000-9000 PLN B2B.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 11,
+      "text": "Zdalny asystent/ka do obsługi klienta. Wymagana dyspozycyjność 8:00-16:00, kontakt telefoniczny z klientami w sprawie zamówień. Praca w systemie CRM. Wynagrodzenie: 3800 PLN brutto.",
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 12,
+      "text": "Zdalny Specjalista ds. e-commerce. Praca z platformą Shopify, wprowadzanie produktów, weryfikacja cen. Kontakt z zespołem wyłącznie przez narzędzia tekstowe (Asana, Slack). Stawka: 35 PLN/h.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 13,
+      "text": "Poszukujemy Telemarketera do sprzedaży naszych usług ubezpieczeniowych. Praca zdalna, wymagane własne słuchawki i ciche miejsce. Kontakt telefoniczny z klientami przez 6h dziennie. Wynagrodzenie: 3500 PLN + prowizja.",
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 14,
+      "text": "QA Localization Tester (Polish). Testowanie gier komputerowych pod kątem błędów językowych i kulturowych. Praca zdalna, asynchroniczna, bez kontaktu telefonicznego. Stawka: 40 PLN/h.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 15,
+      "text": "Księgowa/księgowy do biura rachunkowego. Praca zdalna z wykorzystaniem programów księgowych. Kontakt z klientami głównie mailowy, okazjonalnie telefoniczny (do 1h dziennie). Wynagrodzenie: 5500 PLN netto.",
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 16,
+      "text": "Poszukujemy AI Model Trainer do projektu RLHF. Ocena odpowiedzi modeli językowych, kategoryzowanie danych. Praca w pełni asynchroniczna przez platformę webową. Stawka: 30 USD/h.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 17,
+      "text": "Do naszego zespołu poszukujemy osoby na stanowisko Customer Success Manager. Kontakt z klientami przez telefon i wideorozmowy, prowadzenie prezentacji online. Wymagana doskonała komunikacja werbalna. Wynagrodzenie: 8000-12000 PLN.",
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 18,
+      "text": "Zdalny No-Code Automation Developer. Budowa procesów w n8n i Make. Kontakt z zespołem przez Slack, praca asynchroniczna. Widełki: 12000-16000 PLN B2B.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 19,
+      "text": "Zatrudnimy Data Entry Specialist. Wprowadzanie danych do systemu ERP, weryfikacja faktur. Wymagane: zainstalowanie oprogramowania Hubstaff z funkcją śledzenia czasu i zrzutów ekranu co 10 minut. Praca asynchroniczna. Wynagrodzenie: 3800 PLN netto.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 20,
+      "text": "Live Operations Specialist - monitoring transakcji i alertów systemowych. Praca zmianowa, kontakt z zespołem przez czat wewnętrzny i Slack. Wymagana umiejętność szybkiej reakcji na alerty. Wynagrodzenie: 7000-9000 PLN brutto.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
       }
     }
   ]

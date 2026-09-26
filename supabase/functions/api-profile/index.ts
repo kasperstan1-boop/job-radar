@@ -66,7 +66,7 @@ serve(async (req) => {
       min_hourly_usd: null,
       require_disclosed: false,
     },
-    freshness_hours: 24,
+    freshness_hours: 168,
     geo: {
       remote_worldwide_only: true,
       excluded_regions: [],
