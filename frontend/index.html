@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Radar - Panel Sterowania</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #1e293b;
+        --text: #f8fafc;
+        --accent: #3b82f6;
+        --success: #10b981;
+        --danger: #ef4444;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .panel {
+        background: var(--panel);
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2 {
+        margin-top: 0;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input[type="number"],
+      select,
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #334155;
+        background: #0f172a;
+        color: white;
+        box-sizing: border-box;
+      }
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .checkbox-group input {
+        width: 20px;
+        height: 20px;
+      }
+      .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #2563eb;
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+        margin-left: 10px;
+      }
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+      #auth-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 70vh;
+        text-align: center;
+      }
+      #app-screen {
+        display: none;
+      }
+      .status {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 6px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Ekran ładowania / błędu autoryzacji -->
+    <div id="auth-screen">
+      <div class="panel">
+        <h1>📡 Job Radar</h1>
+        <p id="auth-message">
+          Sprawdzanie uprawnień... Jeśli masz link konfiguracyjny, użyj go.
+        </p>
+      </div>
+    </div>
+
+    <!-- Główny panel aplikacji -->
+    <div id="app-screen">
+      <h1>📡 Job Radar - Konfiguracja</h1>
+
+      <div class="panel">
+        <h2>Filtry Jakościowe (AI)</h2>
+        <div class="checkbox-group">
+          <input type="checkbox" id="strict_no_phone" />
+          <label for="strict_no_phone"
+            >Strict No-Phone (odrzucaj ukryte call center)</label
+          >
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="async_first" />
+          <label for="async_first"
+            >Anti-Spyware (odrzucaj wymóg instalacji trackerów)</label
+          >
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Wymagania Finansowe</h2>
+        <div class="checkbox-group">
+          <input
+            type="checkbox"
+            id="salary_enabled"
+            onchange="toggleSalaryFields()"
+          />
+          <label for="salary_enabled">Włącz filtrowanie po stawkach</label>
+        </div>
+        <div id="salary_fields" style="display: none; margin-top: 10px">
+          <div class="form-group">
+            <label>Minimalna stawka roczna (USD)</label>
+            <input type="number" id="min_annual_usd" placeholder="np. 60000" />
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="require_disclosed" checked />
+            <label for="require_disclosed"
+              >Odrzucaj oferty bez podanych widełek (Przejrzystość)</label
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Powiadomienia i Integracje</h2>
+        <div class="form-group">
+          <label>Teams Webhook URL (opcjonalnie)</label>
+          <input
+            type="text"
+            id="teams_webhook"
+            placeholder="https://twoj-url.webhook.office.com/..."
+          />
+        </div>
+      </div>
+
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <div>
+          <button class="btn btn-primary" onclick="savePreferences()">
+            💾 Zapisz Preferencje
+          </button>
+          <button class="btn btn-danger" onclick="forceReevaluation()">
+            🔄 Wymuś re-ewaluację (Reset bazy)
+          </button>
+        </div>
+        <div id="save-status" class="status"></div>
+      </div>
+    </div>
+
+    <script>
+      // UWAGA: Zmień ten URL na adres swojej Edge Function w Supabase
+      const API_BASE = "https://djnauhtmjlwssvheujoi.supabase.co";
+
+      async function init() {
+        // 1. Zabezpieczenie: Przechwytujemy token z # w URL (nie idzie na serwer)
+        const hash = window.location.hash;
+        let sessionToken = sessionStorage.getItem("session_token");
+
+        if (hash.startsWith("#token=")) {
+          const configToken = hash.replace("#token=", "");
+
+          // 2. Czyścimy URL z tokena, żeby nie wisiał w historii (Security)
+          history.replaceState(null, null, " ");
+
+          document.getElementById("auth-message").innerText =
+            "Wymiana klucza na token sesji...";
+
+          try {
+            // 3. Wymiana config_token na session_token w API
+            const response = await fetch(`${API_BASE}/api-session`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token: configToken }),
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              sessionToken = data.session_token;
+              // 4. Zapisujemy bezpiecznie w sessionStorage (NIE w cookie)
+              sessionStorage.setItem("session_token", sessionToken);
+            } else {
+              throw new Error("Nieprawidłowy lub wygasły link konfiguracyjny.");
+            }
+          } catch (e) {
+            document.getElementById("auth-message").innerText =
+              "Błąd autoryzacji: " + e.message;
+            return;
+          }
+        }
+
+        if (!sessionToken) {
+          document.getElementById("auth-message").innerText =
+            "Brak dostępu. Użyj prywatnego linku z e-maila.";
+          return;
+        }
+
+        // Jeśli mamy token, ładujemy preferencje
+        loadPreferences(sessionToken);
+      }
+
+      async function loadPreferences(token) {
+        try {
+          const response = await fetch(`${API_BASE}/api-preferences`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            populateForm(data.preferences || {});
+
+            document.getElementById("auth-screen").style.display = "none";
+            document.getElementById("app-screen").style.display = "block";
+          }
+        } catch (e) {
+          console.error("Błąd ładowania preferencji", e);
+        }
+      }
+
+      function populateForm(prefs) {
+        document.getElementById("strict_no_phone").checked =
+          prefs.strict_no_phone || false;
+        document.getElementById("async_first").checked =
+          prefs.async_first_no_spyware || false;
+
+        if (prefs.salary) {
+          document.getElementById("salary_enabled").checked =
+            prefs.salary.enabled || false;
+          document.getElementById("min_annual_usd").value =
+            prefs.salary.min_annual_usd || "";
+          document.getElementById("require_disclosed").checked =
+            prefs.salary.require_disclosed !== false;
+          toggleSalaryFields();
+        }
+
+        if (prefs.notifications) {
+          document.getElementById("teams_webhook").value =
+            prefs.notifications.teams_webhook_url || "";
+        }
+      }
+
+      async function savePreferences() {
+        const token = sessionStorage.getItem("session_token");
+        const statusDiv = document.getElementById("save-status");
+
+        const prefs = {
+          strict_no_phone: document.getElementById("strict_no_phone").checked,
+          async_first_no_spyware:
+            document.getElementById("async_first").checked,
+          salary: {
+            enabled: document.getElementById("salary_enabled").checked,
+            min_annual_usd:
+              parseInt(document.getElementById("min_annual_usd").value) || null,
+            require_disclosed:
+              document.getElementById("require_disclosed").checked,
+          },
+          notifications: {
+            teams_webhook_url:
+              document.getElementById("teams_webhook").value || null,
+          },
+        };
+
+        try {
+          const response = await fetch(`${API_BASE}/api-preferences`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ preferences: prefs }),
+          });
+
+          if (response.ok) {
+            statusDiv.innerText =
+              "Zapisano pomyślnie! Będą aktywne przy najbliższym skanowaniu.";
+            statusDiv.style.display = "block";
+            statusDiv.style.background = "var(--success)";
+            setTimeout(() => (statusDiv.style.display = "none"), 4000);
+          }
+        } catch (e) {
+          alert("Błąd zapisu!");
+        }
+      }
+
+      async function forceReevaluation() {
+        if (
+          !confirm(
+            "Czy na pewno chcesz usunąć historię sprawdzonych ofert? System jutro rano przemieli wszystkie dostępne na rynku oferty na nowo (może to potrwać kilkanaście minut).",
+          )
+        )
+          return;
+
+        const token = sessionStorage.getItem("session_token");
+        // Ten endpoint zbudujemy na backendzie
+        const response = await fetch(`${API_BASE}/api-reset-seen-jobs`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.ok) {
+          alert(
+            "Baza wyczyszczona. Jutro rano otrzymasz wyniki z całego rynku dla nowych filtrów.",
+          );
+        }
+      }
+
+      function toggleSalaryFields() {
+        document.getElementById("salary_fields").style.display =
+          document.getElementById("salary_enabled").checked ? "block" : "none";
+      }
+
+      // Uruchomienie przy starcie
+      window.onload = init;
+    </script>
+  </body>
+</html>
