@@ -24,6 +24,39 @@ Job Radar scans 4 global remote job boards every day, filters out duplicates and
 
 ---
 
+## 💭 A note on scope and design decisions
+
+**This project is deliberately built as a minimum viable version — but a fully working one.**
+
+The original vision was significantly more ambitious: dozens of job boards across multiple industries, support for a much wider range of positions (including niche domains such as **trading, iGaming, analytics, and specialized technical roles**), the ability to **select job agencies as data sources**, richer filtering by contract type and timezone, and multi-user teams.
+
+However, I made a deliberate architectural decision:
+
+> **Every single component must run for exactly $0.00 USD per month, forever — using only the free tiers of GitHub Actions, Supabase, Google Gemini, and Resend.**
+
+This constraint forced me to strip the system down to the absolute minimum viable implementation, while still preserving everything that makes Job Radar useful. Every design choice — the number of sources, the LLM throttle, the size of the digest, the retention policies — is calibrated so that **free cloud tiers never get exceeded**, and the accounts never get rate-limited or blocked.
+
+In other words: this is not "a demo that stops working after one run". It is a **production-grade system that runs autonomously 24/7, costs nothing, and can be scaled up instantly** by removing a small number of configuration limits when budget becomes available.
+
+**What would change with proper funding:**
+
+| Area                  | MVP (this repo, $0)                               | Scaled-up version                                                           |
+| --------------------- | ------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Sources**           | 4 global boards (RemoteOK, Remotive, Jobicy, WWR) | 15–30 boards, including niche iGaming, trading, and data-annotation portals |
+| **Positions**         | 18 role tags across 4 pillars                     | Hundreds of role categories, dynamically extracted from postings            |
+| **Agencies**          | Direct employer postings only                     | Ability to whitelist or block recruitment agencies as sources               |
+| **LLM**               | Gemini Free Tier (throttled to ~120 calls/run)    | Dedicated Gemini paid tier — no throttle, 10× more offers processed per run |
+| **Users**             | Single active user (MVP architecture)             | Multi-tenant SaaS with team accounts, shared digests, and role-based access |
+| **Email delivery**    | `onboarding@resend.dev` sandbox                   | Verified custom domain, branded sender, higher monthly quota                |
+| **Database**          | Supabase Free (500 MB)                            | Supabase Pro — unlimited growth, backups, and PITR                          |
+| **Delivery channels** | Email + Teams webhook                             | + Slack, Telegram, Discord, RSS, mobile push notifications                  |
+| **Scoring**           | Static prompt-based LLM audit                     | Personalized re-ranker trained on user feedback (👍/👎)                     |
+| **Languages**         | English-only postings                             | Multi-language normalization and translation                                |
+
+**The point:** every architectural decision in this repo is made so that _adding money later is a configuration change, not a rewrite_. The code, the schema, the abstractions, and the CI/CD pipeline are all ready for scale — they are only throttled at the surface level to stay free.
+
+---
+
 ## 🎯 The problem we solve
 
 Most remote job seekers waste hours manually scanning listings full of traps: hidden call centers disguised as "assistants", offers with no salary range, or toxic companies requiring surveillance software on your personal computer.
