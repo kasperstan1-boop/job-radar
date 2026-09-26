@@ -60,7 +60,7 @@ Job Radar automatyzuje ten proces i **eliminuje 90% szumu** — dostajesz tylko 
 
 ## 🏗️ Architektura
 
-````mermaid
+```mermaid
 flowchart TD
     A[GitHub Actions<br/>Cron 7:00 UTC] --> B[Python Pipeline]
     B --> C{Fetch<br/>4 sources}
@@ -87,31 +87,36 @@ flowchart TD
 
     V[Frontend<br/>GitHub Pages] --> W[index.html]
     V --> X[config.html]
-Stack technologiczny:
+```
 
-Warstwa	Technologia
-Backend	Python 3.12, google-genai, supabase-py, resend, bleach, requests
-Baza danych	Supabase (PostgreSQL)
-Edge Functions	Deno (TypeScript)
-Frontend	HTML/CSS/JS (GitHub Pages)
-LLM	Google Gemini (Flash-Lite, Flash, Pro)
-E-mail	Resend (REST API)
-CI/CD	GitHub Actions (cron + manual)
-Monitoring	Sentry (opcjonalny)
-🚀 Szybki start
-Wymagania
-Python 3.12+
+**Stack technologiczny:**
 
-Konto Supabase (free tier) — baza + Edge Functions
+| Warstwa            | Technologia                                                                |
+| ------------------ | -------------------------------------------------------------------------- |
+| **Backend**        | Python 3.12, `google-genai`, `supabase-py`, `resend`, `bleach`, `requests` |
+| **Baza danych**    | Supabase (PostgreSQL)                                                      |
+| **Edge Functions** | Deno (TypeScript)                                                          |
+| **Frontend**       | HTML/CSS/JS (GitHub Pages)                                                 |
+| **LLM**            | Google Gemini (Flash-Lite, Flash, Pro)                                     |
+| **E-mail**         | Resend (REST API)                                                          |
+| **CI/CD**          | GitHub Actions (cron + manual)                                             |
+| **Monitoring**     | Sentry (opcjonalny)                                                        |
 
-Google AI Studio (free tier) — klucz Gemini (AQ.Ab8... lub AIzaSy...)
+---
 
-Resend (free tier, 3000 maili/mies.) — wysyłka e-maili
+## 🚀 Szybki start
 
-GitHub — repo + Actions
+### Wymagania
 
-Instalacja
-bash
+- **Python** 3.12+
+- **Konto Supabase** (free tier) — baza + Edge Functions
+- **Google AI Studio** (free tier) — klucz Gemini (`AQ.Ab8...` lub `AIzaSy...`)
+- **Resend** (free tier, 3000 maili/mies.) — wysyłka e-maili
+- **GitHub** — repo + Actions
+
+### Instalacja
+
+```bash
 # 1. Klonowanie repo
 git clone https://github.com/kasperstan1-boop/job-radar.git
 cd job-radar
@@ -136,8 +141,12 @@ supabase functions deploy api-reset-seen-jobs
 
 # 6. Uruchomienie pipeline'u
 python -m jobradar.pipeline
-<details> <summary>📋 <strong>Schemat bazy danych (kliknij, aby rozwinąć)</strong></summary>
-sql
+```
+
+<details>
+<summary>📋 <strong>Schemat bazy danych (kliknij, aby rozwinąć)</strong></summary>
+
+```sql
 -- user_profiles
 create table user_profiles (
   id                 uuid primary key default gen_random_uuid(),
@@ -190,25 +199,36 @@ create table llm_cache (
   model_used      text,
   created_at      timestamptz default now()
 );
+```
+
 </details>
-Konfiguracja
-bash
+
+### Konfiguracja
+
+```bash
 cp .env.example .env
-Uzupełnij .env:
+```
 
-Zmienna	Opis	Gdzie znaleźć
-SUPABASE_URL	https://<ref>.supabase.co	Supabase → Settings → API
-SUPABASE_SERVICE_KEY	sb_secret_... (nowy) lub eyJ... (legacy)	Supabase → Settings → API
-GEMINI_API_KEY	AQ.Ab8... lub AIzaSy...	aistudio.google.com
-RESEND_API_KEY	re_...	resend.com/api-keys
-NOTIFICATION_EMAIL	Twój e-mail (zweryfikowany w Resend)	—
-TEAMS_WEBHOOK_URL	opcjonalny webhook Teams	Teams → Workflows
-SENTRY_DSN	opcjonalny monitoring błędów	sentry.io
-[!WARNING]
-W darmowym planie Resend, bez własnej domeny, można wysyłać e-maile tylko na adres, którym zarejestrowałeś konto Resend.
+Uzupełnij `.env`:
 
-📂 Struktura projektu
-text
+| Zmienna                | Opis                                         | Gdzie znaleźć                                             |
+| ---------------------- | -------------------------------------------- | --------------------------------------------------------- |
+| `SUPABASE_URL`         | `https://<ref>.supabase.co`                  | Supabase → Settings → API                                 |
+| `SUPABASE_SERVICE_KEY` | `sb_secret_...` (nowy) lub `eyJ...` (legacy) | Supabase → Settings → API                                 |
+| `GEMINI_API_KEY`       | `AQ.Ab8...` lub `AIzaSy...`                  | [aistudio.google.com](https://aistudio.google.com/apikey) |
+| `RESEND_API_KEY`       | `re_...`                                     | [resend.com/api-keys](https://resend.com/api-keys)        |
+| `NOTIFICATION_EMAIL`   | Twój e-mail (zweryfikowany w Resend)         | —                                                         |
+| `TEAMS_WEBHOOK_URL`    | opcjonalny webhook Teams                     | Teams → Workflows                                         |
+| `SENTRY_DSN`           | opcjonalny monitoring błędów                 | [sentry.io](https://sentry.io)                            |
+
+> [!WARNING]
+> W darmowym planie Resend, bez własnej domeny, można wysyłać e-maile **tylko na adres, którym zarejestrowałeś konto Resend**.
+
+---
+
+## 📂 Struktura projektu
+
+```text
 job-radar/
 ├── .github/workflows/digest.yml     # GitHub Actions cron
 ├── frontend/
@@ -240,10 +260,15 @@ job-radar/
 │   ├── test_all_sources.py          # Test 4 scraperów
 │   └── eval_dataset/                # Golden Dataset (20 ofert)
 ├── examples/
-│   └── digest_example.html          # Przykładowy raport
+│   ├── digest_example.html          # Przykładowy raport (HTML)
+│   └── digest_example.png           # Screenshot raportu
 ├── .env.example
 ├── requirements.txt
 └── README.md
+```
+
+---
+
 ## 📄 Przykładowy digest
 
 Job Radar wysyła codziennie spersonalizowany raport HTML. Każda oferta zawiera ocenę LLM (0–100%), 2-zdaniowe podsumowanie i czerwone flagi.
@@ -252,8 +277,11 @@ Job Radar wysyła codziennie spersonalizowany raport HTML. Każda oferta zawiera
 
 > Pełny HTML znajdziesz w [`examples/digest_example.html`](examples/digest_example.html).
 
-🧪 Testy i ewaluacja
-bash
+---
+
+## 🧪 Testy i ewaluacja
+
+```bash
 # Testy jednostkowe
 python -m tests.test_fingerprint
 python -m tests.test_filters
@@ -263,29 +291,43 @@ python -m tests.test_all_sources
 python -m tests.eval_dataset.eval_prompts
 python -m tests.eval_dataset.eval_prompts --verbose
 python -m tests.eval_dataset.eval_prompts --threshold 0.90
-Metryki (ostatni run):
+```
 
-Filtr	Precision	Recall	F1
-No-Phone Guarantee	100%	100%	100%
-Async-Friendly	100%	90%	94.7%
-Salary Disclosed	100%	100%	100%
-💰 Koszty
+**Metryki (ostatni run):**
+
+| Filtr              | Precision | Recall | F1    |
+| ------------------ | --------- | ------ | ----- |
+| No-Phone Guarantee | **100%**  | 100%   | 100%  |
+| Async-Friendly     | **100%**  | 90%    | 94.7% |
+| Salary Disclosed   | **100%**  | 100%   | 100%  |
+
+---
+
+## 💰 Koszty
+
 Wszystko w darmowych planach:
 
-Usługa	Limit free tier	Wykorzystanie
-GitHub Actions	2000 min/mies.	~5 min/dzień
-Supabase (baza)	500 MB, 2 GB transfer	<10 MB
-Supabase Edge Functions	500k wywołań/mies.	~30/dzień
-Google Gemini	15 RPM, 500–1500 RPD	~31/dzień
-Resend	3000 maili/mies.	1/dzień
-GitHub Pages	unlimited	—
-Koszt miesięczny: 0,00 USD.
+| Usługa                  | Limit free tier       | Wykorzystanie |
+| ----------------------- | --------------------- | ------------- |
+| GitHub Actions          | 2000 min/mies.        | ~5 min/dzień  |
+| Supabase (baza)         | 500 MB, 2 GB transfer | <10 MB        |
+| Supabase Edge Functions | 500k wywołań/mies.    | ~30/dzień     |
+| Google Gemini           | 15 RPM, 500–1500 RPD  | ~31/dzień     |
+| Resend                  | 3000 maili/mies.      | 1/dzień       |
+| GitHub Pages            | unlimited             | —             |
 
-📄 Licencja
+**Koszt miesięczny: 0,00 USD.**
+
+---
+
+## 📄 Licencja
+
 MIT — używaj, modyfikuj, sprzedawaj. Kod dostarczony bez gwarancji.
 
-<div align="center">
-Zbudowane z ❤️ przy użyciu darmowych narzędzi
+---
 
-</div> ```
-````
+<div align="center">
+
+**Zbudowane z ❤️ przy użyciu darmowych narzędzi**
+
+</div>
