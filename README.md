@@ -244,6 +244,16 @@ job-radar/
 ├── .env.example
 ├── requirements.txt
 └── README.md
+## 📄 Przykładowy digest
+
+Job Radar wysyła codziennie spersonalizowany raport HTML. Każda oferta zawiera ocenę LLM (0–100%), 2-zdaniowe podsumowanie i czerwone flagi.
+
+![Przykładowy digest](examples/digest_example.png)
+
+> Pełny HTML znajdziesz w [`examples/digest_example.html`](examples/digest_example.html).
+
+---
+
 🧪 Testy i ewaluacja
 bash
 # Testy jednostkowe
