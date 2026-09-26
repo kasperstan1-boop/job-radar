@@ -3,358 +3,854 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Job Radar - Panel Sterowania</title>
+    <title>Job Radar v3.6 – Panel Sterowania</title>
     <style>
       :root {
-        --bg: #0f172a;
-        --panel: #1e293b;
-        --text: #f8fafc;
-        --accent: #3b82f6;
-        --success: #10b981;
-        --danger: #ef4444;
+        --bg-main: #0b0f19;
+        --bg-card: #151d30;
+        --bg-input: #0b1120;
+        --border: #24324f;
+        --primary: #0284c7;
+        --primary-hover: #0369a1;
+        --accent: #38bdf8;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --danger: #dc2626;
+        --success: #16a34a;
+      }
+      * {
+        box-sizing: border-box;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
       body {
-        font-family:
-          system-ui,
-          -apple-system,
-          sans-serif;
-        background-color: var(--bg);
-        color: var(--text);
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
+        background: var(--bg-main);
+        color: var(--text-main);
+        margin: 0;
+        padding: 24px;
+        display: flex;
+        justify-content: center;
       }
-      .panel {
-        background: var(--panel);
-        padding: 25px;
+      .app-container {
+        width: 100%;
+        max-width: 900px;
+      }
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 12px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 28px;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       }
       h1,
-      h2 {
+      h2,
+      h3 {
+        color: var(--accent);
         margin-top: 0;
       }
-      .form-group {
-        margin-bottom: 15px;
+      p {
+        color: var(--text-muted);
+        line-height: 1.5;
+        font-size: 14px;
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      /* Grid & Inputs */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .grid-roles {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
       }
       label {
+        font-size: 14px;
+        font-weight: 500;
         display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
+        margin-bottom: 6px;
       }
+      input[type="text"],
+      input[type="email"],
       input[type="number"],
       select,
-      input[type="text"] {
+      textarea {
         width: 100%;
-        padding: 10px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        color: #fff;
+        padding: 10px 14px;
         border-radius: 6px;
-        border: 1px solid #334155;
-        background: #0f172a;
-        color: white;
-        box-sizing: border-box;
+        font-size: 14px;
+        margin-bottom: 14px;
       }
-      .checkbox-group {
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--accent);
+        outline: none;
+      }
+
+      /* Chipy i checkboxy */
+      .checkbox-label {
         display: flex;
         align-items: center;
         gap: 10px;
+        cursor: pointer;
         margin-bottom: 10px;
+        font-size: 14px;
+        color: var(--text-main);
       }
-      .checkbox-group input {
-        width: 20px;
-        height: 20px;
+      .checkbox-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: var(--primary);
       }
-      .btn {
-        padding: 12px 20px;
+      .role-chip {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+      .role-chip:hover {
+        border-color: var(--accent);
+      }
+      .role-chip input {
+        margin: 0;
+        width: 16px;
+        height: 16px;
+        accent-color: var(--primary);
+      }
+
+      /* Przyciski */
+      button {
+        background: var(--primary);
+        color: #fff;
         border: none;
+        padding: 12px 20px;
         border-radius: 6px;
-        font-weight: bold;
+        font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
         transition: 0.2s;
-      }
-      .btn-primary {
-        background: var(--accent);
-        color: white;
-      }
-      .btn-primary:hover {
-        background: #2563eb;
-      }
-      .btn-danger {
-        background: var(--danger);
-        color: white;
-        margin-left: 10px;
-      }
-      .btn-danger:hover {
-        background: #dc2626;
-      }
-      #auth-screen {
-        display: flex;
-        flex-direction: column;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        height: 70vh;
-        text-align: center;
+        gap: 8px;
       }
-      #app-screen {
+      button:hover {
+        background: var(--primary-hover);
+      }
+      button.secondary {
+        background: #334155;
+      }
+      button.secondary:hover {
+        background: #475569;
+      }
+      button.danger {
+        background: var(--danger);
+      }
+      button.danger:hover {
+        background: #b91c1c;
+      }
+      .actions-bar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      /* Banery statusu */
+      .status-box {
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        margin-bottom: 20px;
         display: none;
       }
-      .status {
-        margin-top: 15px;
-        padding: 10px;
-        border-radius: 6px;
-        display: none;
+      .status-box.success {
+        background: #064e3b;
+        border: 1px solid var(--success);
+        color: #a7f3d0;
+        display: block;
+      }
+      .status-box.error {
+        background: #7f1d1d;
+        border: 1px solid var(--danger);
+        color: #fecaca;
+        display: block;
+      }
+
+      .badge {
+        background: #0369a1;
+        color: #bae6fd;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-left: 6px;
+      }
+      .section-title {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
+        margin-top: 24px;
+        margin-bottom: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--accent);
       }
     </style>
   </head>
   <body>
-    <!-- Ekran ładowania / błędu autoryzacji -->
-    <div id="auth-screen">
-      <div class="panel">
-        <h1>📡 Job Radar</h1>
-        <p id="auth-message">
-          Sprawdzanie uprawnień... Jeśli masz link konfiguracyjny, użyj go.
+    <div class="app-container">
+      <!-- EKRAN 1: REJESTRACJA I LOGOWANIE -->
+      <div id="auth-screen" class="card">
+        <h1>Job Radar v3.6</h1>
+        <p>
+          Autonomiczny system monitorowania ofert zdalnych z audytem jakościowym
+          LLM Gemini. Wpisz swój adres e-mail, aby uzyskać bezhasłowy dostęp do
+          systemu.
         </p>
+
+        <div id="auth-status" class="status-box"></div>
+
+        <label for="email-input">Twój adres e-mail</label>
+        <input
+          type="email"
+          id="email-input"
+          placeholder="np. twoj-mail@domena.pl"
+        />
+
+        <button onclick="handleAuthSubmit()">
+          Wygeneruj i odblokuj dostęp
+        </button>
+
+        <div
+          id="token-result"
+          class="hidden"
+          style="
+            margin-top: 20px;
+            background: var(--bg-input);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+          "
+        >
+          <h3 style="margin-bottom: 8px; font-size: 15px">
+            Dostęp został wygenerowany!
+          </h3>
+          <p id="token-desc" style="margin-bottom: 12px"></p>
+          <div class="actions-bar">
+            <button onclick="downloadKeyFile()">
+              💾 Pobierz plik klucza (.key)
+            </button>
+            <button class="secondary" onclick="loginDirectly()">
+              🚀 Przejdź do panelu
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Główny panel aplikacji -->
-    <div id="app-screen">
-      <h1>📡 Job Radar - Konfiguracja</h1>
+      <!-- EKRAN 2: PEŁNY PANEL PREFERENCJI -->
+      <div id="dashboard-screen" class="card hidden">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+          "
+        >
+          <div>
+            <h2 style="margin: 0">Panel Sterowania Kryteriami</h2>
+            <p style="margin: 4px 0 0 0">
+              Zarządzanie regułami filtrowania bota i powiadomień
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <button class="secondary" onclick="downloadKeyFile()">
+              Klucz .key
+            </button>
+            <button class="danger" onclick="logout()">Wyloguj</button>
+          </div>
+        </div>
 
-      <div class="panel">
-        <h2>Filtry Jakościowe (AI)</h2>
-        <div class="checkbox-group">
-          <input type="checkbox" id="strict_no_phone" />
-          <label for="strict_no_phone"
-            >Strict No-Phone (odrzucaj ukryte call center)</label
+        <div id="dashboard-status" class="status-box"></div>
+
+        <!-- FILAR 1: ROLE I STANOWISKA -->
+        <div class="section-title">
+          1. Taksonomia Ról i Stanowisk (Wybierz pasujące)
+        </div>
+        <p style="font-size: 12px; margin-bottom: 6px">
+          Filar 1: Ekosystem AI & Danych
+        </p>
+        <div class="grid-roles">
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="ai_model_trainer" /> AI
+            Model Trainer</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="rlhf_contributor" /> RLHF
+            Contributor / Red Team</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="audio_image_annotator" />
+            Audio / Image Annotator</label
+          >
+          <label class="role-chip"
+            ><input
+              type="checkbox"
+              name="role"
+              value="search_relevance_evaluator"
+            />
+            Search Relevance Evaluator</label
           >
         </div>
-        <div class="checkbox-group">
-          <input type="checkbox" id="async_first" />
-          <label for="async_first"
-            >Anti-Spyware (odrzucaj wymóg instalacji trackerów)</label
+
+        <p style="font-size: 12px; margin-top: 14px; margin-bottom: 6px">
+          Filar 2: Back-Office, E-commerce & „Ciche Role”
+        </p>
+        <div class="grid-roles">
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="async_chat_support" />
+            Async Chat Support</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="content_moderator" />
+            Moderator Treści</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="ecommerce_ops" />
+            E-commerce Ops (Shopify/Amazon)</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="data_verification" />
+            Weryfikacja Danych (KYC/AML)</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="virtual_assistant" />
+            Wirtualny Asystent (No-Calls)</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="bookkeeping_ap_ar" />
+            Księgowość AP/AR</label
           >
         </div>
-      </div>
 
-      <div class="panel">
-        <h2>Wymagania Finansowe</h2>
-        <div class="checkbox-group">
+        <p style="font-size: 12px; margin-top: 14px; margin-bottom: 6px">
+          Filar 3 & 4: IT, Automatyzacja, Analityka
+        </p>
+        <div class="grid-roles">
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="python_scraper" /> Python
+            Scraper / Integracje</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="no_code_automation" />
+            No-Code (Make / n8n / Zapier)</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="devops_sre_async" />
+            DevOps / SRE (Async)</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="technical_writer" />
+            Technical Writer</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="live_ops_risk" /> Live
+            Ops & Risk Analyst</label
+          >
+          <label class="role-chip"
+            ><input type="checkbox" name="role" value="qa_localization" /> QA &
+            Lokalizacja Gier</label
+          >
+        </div>
+
+        <div class="grid-2" style="margin-top: 14px">
+          <div>
+            <label>Własne Tagi (oddziel przecinkami)</label>
+            <input
+              type="text"
+              id="custom-tags"
+              placeholder="np. prompt engineer, rust, sql"
+            />
+          </div>
+          <div>
+            <label>Tryb dopasowania ról</label>
+            <select id="match-mode">
+              <option value="any">Dowolna z wybranych ról (OR)</option>
+              <option value="all">Wszystkie wybrane role (AND)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- FILTRY JAKOŚCIOWE LLM -->
+        <div class="section-title">
+          2. Unikalne Filtry Jakościowe LLM (Przewaga Job Radar)
+        </div>
+        <label class="checkbox-label">
+          <input type="checkbox" id="strict-no-phone" />
+          <strong>Gwarancja „No-Phone”</strong> – Automatyczne odrzucanie ofert
+          maskujących call-center, infolinie i „dynamiczną komunikację głosową”.
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="async-no-spyware" />
+          <strong>Anti-Spyware & Async-First</strong> – Odrzucanie inwigilacji
+          (Time Doctor, Hubstaff, zrzuty ekranu, śledzenie myszy).
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="ignore-degree" />
+          <strong>Ignoruj wymóg dyplomu / studiów</strong> – Skupienie na
+          realnych umiejętnościach.
+        </label>
+
+        <!-- WIDEŁKI I FINANSE -->
+        <div class="section-title">3. Widełki Finansowe</div>
+        <label class="checkbox-label">
           <input
             type="checkbox"
-            id="salary_enabled"
-            onchange="toggleSalaryFields()"
+            id="salary-enabled"
+            onchange="toggleSalaryInputs()"
           />
-          <label for="salary_enabled">Włącz filtrowanie po stawkach</label>
-        </div>
-        <div id="salary_fields" style="display: none; margin-top: 10px">
-          <div class="form-group">
-            <label>Minimalna stawka roczna (USD)</label>
-            <input type="number" id="min_annual_usd" placeholder="np. 60000" />
+          Włącz twardy filtr finansowy
+        </label>
+        <div
+          class="grid-2"
+          id="salary-fields"
+          style="opacity: 0.5; pointer-events: none"
+        >
+          <div>
+            <label>Min. stawka roczna (USD)</label>
+            <input type="number" id="min-annual" placeholder="np. 45000" />
           </div>
-          <div class="checkbox-group">
-            <input type="checkbox" id="require_disclosed" checked />
-            <label for="require_disclosed"
-              >Odrzucaj oferty bez podanych widełek (Przejrzystość)</label
-            >
+          <div>
+            <label>Min. stawka godzinowa (USD)</label>
+            <input type="number" id="min-hourly" placeholder="np. 25" />
           </div>
         </div>
-      </div>
+        <label class="checkbox-label">
+          <input type="checkbox" id="require-disclosed" />
+          Odrzucaj oferty bez jawnych widełek płacowych
+        </label>
 
-      <div class="panel">
-        <h2>Powiadomienia i Integracje</h2>
-        <div class="form-group">
-          <label>Teams Webhook URL (opcjonalnie)</label>
-          <input
-            type="text"
-            id="teams_webhook"
-            placeholder="https://twoj-url.webhook.office.com/..."
-          />
+        <!-- GEO & ŚWIEŻOŚĆ -->
+        <div class="section-title">4. Zasięg & Świeżość Ofert</div>
+        <div class="grid-2">
+          <div>
+            <label>Świeżość ogłoszeń</label>
+            <select id="freshness">
+              <option value="24">Ostatnie 24 godziny</option>
+              <option value="48">Ostatnie 48 godzin</option>
+              <option value="168">Ostatnie 7 dni</option>
+            </select>
+          </div>
+          <div>
+            <label>Zasięg geograficzny</label>
+            <label class="checkbox-label" style="margin-top: 10px">
+              <input type="checkbox" id="worldwide-only" /> Tylko 100% Worldwide
+              Remote
+            </label>
+          </div>
         </div>
-      </div>
 
-      <div
-        style="
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        "
-      >
-        <div>
-          <button class="btn btn-primary" onclick="savePreferences()">
-            💾 Zapisz Preferencje
-          </button>
-          <button class="btn btn-danger" onclick="forceReevaluation()">
-            🔄 Wymuś re-ewaluację (Reset bazy)
+        <!-- KANAŁY DOSTARCZANIA -->
+        <div class="section-title">5. Kanały Dostarczania Digestu</div>
+        <div class="grid-2">
+          <div>
+            <label>Godzina raportu (0-23 UTC)</label>
+            <input type="number" id="digest-hour" min="0" max="23" value="7" />
+          </div>
+          <div>
+            <label>Maks. ofert w jednym raporcie</label>
+            <input type="number" id="max-jobs" min="5" max="50" value="25" />
+          </div>
+        </div>
+        <label class="checkbox-label">
+          <input type="checkbox" id="email-enabled" /> Wysyłaj poranny raport
+          e-mail
+        </label>
+        <label>Teams Adaptive Cards Webhook URL (Power Automate)</label>
+        <input
+          type="text"
+          id="teams-webhook"
+          placeholder="https://default...webhook.office.com/..."
+        />
+        <label>Slack Webhook URL</label>
+        <input
+          type="text"
+          id="slack-webhook"
+          placeholder="https://hooks.slack.com/services/..."
+        />
+
+        <!-- WYKLUCZENIA -->
+        <div class="section-title">6. Czarna Lista (Wykluczenia)</div>
+        <div class="grid-2">
+          <div>
+            <label>Wykluczone firmy (oddziel przecinkami)</label>
+            <input
+              type="text"
+              id="blocklist-companies"
+              placeholder="np. Crossover, BairesDev"
+            />
+          </div>
+          <div>
+            <label>Wykluczone słowa kluczowe</label>
+            <input
+              type="text"
+              id="blocklist-keywords"
+              placeholder="np. sales, cold calling"
+            />
+          </div>
+        </div>
+
+        <!-- AKCJE -->
+        <div
+          class="actions-bar"
+          style="
+            margin-top: 30px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+          "
+        >
+          <button onclick="savePreferences()">💾 Zapisz preferencje</button>
+          <button class="danger" onclick="resetSeenJobs()">
+            ⚡ Wymuś re-ewaluację (Reset historii ofert)
           </button>
         </div>
-        <div id="save-status" class="status"></div>
       </div>
     </div>
 
     <script>
-      // UWAGA: Zmień ten URL na adres swojej Edge Function w Supabase
-      const API_BASE = "https://djnauhtmjlwssvheujoi.supabase.co";
+      const SUPABASE_URL = "https://djnauhtmjlwssvheujoi.supabase.co";
+      let currentRawToken = "";
 
       async function init() {
-        // 1. Zabezpieczenie: Przechwytujemy token z # w URL (nie idzie na serwer)
+        // 1. Sprawdź, czy URL zawiera hash #token=...
         const hash = window.location.hash;
-        let sessionToken = sessionStorage.getItem("session_token");
-
-        if (hash.startsWith("#token=")) {
-          const configToken = hash.replace("#token=", "");
-
-          // 2. Czyścimy URL z tokena, żeby nie wisiał w historii (Security)
-          history.replaceState(null, null, " ");
-
-          document.getElementById("auth-message").innerText =
-            "Wymiana klucza na token sesji...";
-
-          try {
-            // 3. Wymiana config_token na session_token w API
-            const response = await fetch(`${API_BASE}/api-session`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ token: configToken }),
-            });
-
-            if (response.ok) {
-              const data = await response.json();
-              sessionToken = data.session_token;
-              // 4. Zapisujemy bezpiecznie w sessionStorage (NIE w cookie)
-              sessionStorage.setItem("session_token", sessionToken);
-            } else {
-              throw new Error("Nieprawidłowy lub wygasły link konfiguracyjny.");
-            }
-          } catch (e) {
-            document.getElementById("auth-message").innerText =
-              "Błąd autoryzacji: " + e.message;
-            return;
-          }
-        }
-
-        if (!sessionToken) {
-          document.getElementById("auth-message").innerText =
-            "Brak dostępu. Użyj prywatnego linku z e-maila.";
+        if (hash.includes("#token=")) {
+          const token = hash.split("#token=")[1].split("&")[0];
+          currentRawToken = token;
+          history.replaceState(null, null, window.location.pathname);
+          await exchangeToken(token);
           return;
         }
 
-        // Jeśli mamy token, ładujemy preferencje
-        loadPreferences(sessionToken);
+        // 2. Sprawdź, czy sesja istnieje w sessionStorage
+        const sessionToken = sessionStorage.getItem("session_token");
+        if (sessionToken) {
+          showDashboard();
+          loadPreferences(sessionToken);
+        }
       }
 
-      async function loadPreferences(token) {
+      async function handleAuthSubmit() {
+        const email = document.getElementById("email-input").value;
+        if (!email || !email.includes("@")) {
+          showStatus("auth-status", "Wpisz poprawny adres e-mail.", "error");
+          return;
+        }
+
+        showStatus("auth-status", "Generowanie tokenu i profilu...", "success");
+
         try {
-          const response = await fetch(`${API_BASE}/api-preferences`, {
-            headers: { Authorization: `Bearer ${token}` },
+          const res = await fetch(`${SUPABASE_URL}/functions/v1/api-profile`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
           });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Wystąpił błąd");
 
-          if (response.ok) {
-            const data = await response.json();
-            populateForm(data.preferences || {});
-
-            document.getElementById("auth-screen").style.display = "none";
-            document.getElementById("app-screen").style.display = "block";
-          }
-        } catch (e) {
-          console.error("Błąd ładowania preferencji", e);
+          currentRawToken = data.token;
+          document.getElementById("token-desc").innerText = data.message;
+          document.getElementById("token-result").classList.remove("hidden");
+          showStatus("auth-status", "Token wygenerowany pomyślnie!", "success");
+        } catch (err) {
+          showStatus("auth-status", err.message, "error");
         }
       }
 
-      function populateForm(prefs) {
-        document.getElementById("strict_no_phone").checked =
-          prefs.strict_no_phone || false;
-        document.getElementById("async_first").checked =
-          prefs.async_first_no_spyware || false;
+      async function exchangeToken(token) {
+        try {
+          const res = await fetch(`${SUPABASE_URL}/functions/v1/api-session`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Błąd autoryzacji tokenu");
 
-        if (prefs.salary) {
-          document.getElementById("salary_enabled").checked =
-            prefs.salary.enabled || false;
-          document.getElementById("min_annual_usd").value =
-            prefs.salary.min_annual_usd || "";
-          document.getElementById("require_disclosed").checked =
-            prefs.salary.require_disclosed !== false;
-          toggleSalaryFields();
+          sessionStorage.setItem("session_token", data.session_token);
+          showDashboard();
+          loadPreferences(data.session_token);
+        } catch (err) {
+          showStatus("auth-status", err.message, "error");
         }
+      }
 
-        if (prefs.notifications) {
-          document.getElementById("teams_webhook").value =
-            prefs.notifications.teams_webhook_url || "";
+      function loginDirectly() {
+        if (currentRawToken) {
+          exchangeToken(currentRawToken);
         }
+      }
+
+      function downloadKeyFile() {
+        const tokenToSave =
+          currentRawToken || prompt("Podaj swój token do zapisania w pliku:");
+        if (!tokenToSave) return;
+        const blob = new Blob(
+          [
+            `JOB_RADAR_ACCESS_KEY=${tokenToSave}\nLOGIN_URL=https://kasperstan1-boop.github.io/job-radar/index.html#token=${tokenToSave}`,
+          ],
+          { type: "text/plain" },
+        );
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "job-radar-access.key";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function loadPreferences(sessionToken) {
+        try {
+          const res = await fetch(
+            `${SUPABASE_URL}/functions/v1/api-preferences`,
+            {
+              method: "GET",
+              headers: { Authorization: `Bearer ${sessionToken}` },
+            },
+          );
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.error || "Nie udało się pobrać preferencji");
+          populateForm(data.preferences || {});
+        } catch (err) {
+          showStatus("dashboard-status", err.message, "error");
+        }
+      }
+
+      function populateForm(p) {
+        // Role
+        const selectedRoles = p.roles?.selected || [];
+        document.querySelectorAll("input[name='role']").forEach((cb) => {
+          cb.checked = selectedRoles.includes(cb.value);
+        });
+        document.getElementById("custom-tags").value = (
+          p.roles?.custom_tags || []
+        ).join(", ");
+        document.getElementById("match-mode").value =
+          p.roles?.match_mode || "any";
+
+        // Filtry LLM
+        document.getElementById("strict-no-phone").checked =
+          !!p.strict_no_phone;
+        document.getElementById("async-no-spyware").checked =
+          !!p.async_first_no_spyware;
+        document.getElementById("ignore-degree").checked =
+          !!p.ignore_degree_requirement;
+
+        // Płace
+        const salary = p.salary || {};
+        document.getElementById("salary-enabled").checked = !!salary.enabled;
+        document.getElementById("min-annual").value =
+          salary.min_annual_usd || "";
+        document.getElementById("min-hourly").value =
+          salary.min_hourly_usd || "";
+        document.getElementById("require-disclosed").checked =
+          !!salary.require_disclosed;
+        toggleSalaryInputs();
+
+        // Geo & Świeżość
+        document.getElementById("freshness").value = p.freshness_hours || 24;
+        document.getElementById("worldwide-only").checked =
+          !!p.geo?.remote_worldwide_only;
+
+        // Notyfikacje
+        const notif = p.notifications || {};
+        document.getElementById("digest-hour").value =
+          notif.digest_hour_utc ?? 7;
+        document.getElementById("max-jobs").value =
+          notif.max_jobs_per_digest || 25;
+        document.getElementById("email-enabled").checked =
+          notif.email_enabled !== false;
+        document.getElementById("teams-webhook").value =
+          notif.teams_webhook_url || "";
+        document.getElementById("slack-webhook").value =
+          notif.slack_webhook_url || "";
+
+        // Wykluczenia
+        document.getElementById("blocklist-companies").value = (
+          p.blocklist?.companies || []
+        ).join(", ");
+        document.getElementById("blocklist-keywords").value = (
+          p.blocklist?.keywords || []
+        ).join(", ");
       }
 
       async function savePreferences() {
-        const token = sessionStorage.getItem("session_token");
-        const statusDiv = document.getElementById("save-status");
+        const sessionToken = sessionStorage.getItem("session_token");
+        const selectedRoles = Array.from(
+          document.querySelectorAll("input[name='role']:checked"),
+        ).map((cb) => cb.value);
+        const customTags = document
+          .getElementById("custom-tags")
+          .value.split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
 
-        const prefs = {
-          strict_no_phone: document.getElementById("strict_no_phone").checked,
-          async_first_no_spyware:
-            document.getElementById("async_first").checked,
-          salary: {
-            enabled: document.getElementById("salary_enabled").checked,
-            min_annual_usd:
-              parseInt(document.getElementById("min_annual_usd").value) || null,
-            require_disclosed:
-              document.getElementById("require_disclosed").checked,
+        const preferences = {
+          roles: {
+            selected: selectedRoles,
+            custom_tags: customTags,
+            match_mode: document.getElementById("match-mode").value,
           },
+          strict_no_phone: document.getElementById("strict-no-phone").checked,
+          async_first_no_spyware:
+            document.getElementById("async-no-spyware").checked,
+          ignore_degree_requirement:
+            document.getElementById("ignore-degree").checked,
+          salary: {
+            enabled: document.getElementById("salary-enabled").checked,
+            min_annual_usd:
+              parseInt(document.getElementById("min-annual").value) || null,
+            min_hourly_usd:
+              parseFloat(document.getElementById("min-hourly").value) || null,
+            require_disclosed:
+              document.getElementById("require-disclosed").checked,
+          },
+          freshness_hours:
+            parseInt(document.getElementById("freshness").value) || 24,
+          geo: {
+            remote_worldwide_only:
+              document.getElementById("worldwide-only").checked,
+            excluded_regions: [],
+          },
+          language: {
+            offer_languages: ["en"],
+            require_english_ok: true,
+          },
+          blocklist: {
+            companies: document
+              .getElementById("blocklist-companies")
+              .value.split(",")
+              .map((s) => s.trim())
+              .filter(Boolean),
+            keywords: document
+              .getElementById("blocklist-keywords")
+              .value.split(",")
+              .map((s) => s.trim())
+              .filter(Boolean),
+          },
+          allowlist: { companies: [] },
           notifications: {
+            digest_hour_utc:
+              parseInt(document.getElementById("digest-hour").value) || 7,
+            max_jobs_per_digest:
+              parseInt(document.getElementById("max-jobs").value) || 25,
+            format: "html",
+            email_enabled: document.getElementById("email-enabled").checked,
             teams_webhook_url:
-              document.getElementById("teams_webhook").value || null,
+              document.getElementById("teams-webhook").value.trim() || null,
+            slack_webhook_url:
+              document.getElementById("slack-webhook").value.trim() || null,
           },
         };
 
         try {
-          const response = await fetch(`${API_BASE}/api-preferences`, {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+          const res = await fetch(
+            `${SUPABASE_URL}/functions/v1/api-preferences`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionToken}`,
+              },
+              body: JSON.stringify({ preferences }),
             },
-            body: JSON.stringify({ preferences: prefs }),
-          });
-
-          if (response.ok) {
-            statusDiv.innerText =
-              "Zapisano pomyślnie! Będą aktywne przy najbliższym skanowaniu.";
-            statusDiv.style.display = "block";
-            statusDiv.style.background = "var(--success)";
-            setTimeout(() => (statusDiv.style.display = "none"), 4000);
-          }
-        } catch (e) {
-          alert("Błąd zapisu!");
+          );
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Błąd zapisu preferencji");
+          showStatus(
+            "dashboard-status",
+            "Preferencje zapisane pomyślnie w chmurze!",
+            "success",
+          );
+        } catch (err) {
+          showStatus("dashboard-status", err.message, "error");
         }
       }
 
-      async function forceReevaluation() {
+      async function resetSeenJobs() {
         if (
           !confirm(
-            "Czy na pewno chcesz usunąć historię sprawdzonych ofert? System jutro rano przemieli wszystkie dostępne na rynku oferty na nowo (może to potrwać kilkanaście minut).",
+            "Wymuszenie re-ewaluacji: Czy na pewno chcesz wyczyścić historię przesłanych ofert? Podczas kolejnego uruchomienia bot oceni oferty z ostatnich 24h na nowo.",
           )
         )
           return;
-
-        const token = sessionStorage.getItem("session_token");
-        // Ten endpoint zbudujemy na backendzie
-        const response = await fetch(`${API_BASE}/api-reset-seen-jobs`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.ok) {
-          alert(
-            "Baza wyczyszczona. Jutro rano otrzymasz wyniki z całego rynku dla nowych filtrów.",
+        const sessionToken = sessionStorage.getItem("session_token");
+        try {
+          const res = await fetch(
+            `${SUPABASE_URL}/functions/v1/api-reset-seen-jobs`,
+            {
+              method: "DELETE",
+              headers: { Authorization: `Bearer ${sessionToken}` },
+            },
           );
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Błąd resetu");
+          showStatus(
+            "dashboard-status",
+            "Historia wyczyszczona. Rynek zostanie oceniony na nowo!",
+            "success",
+          );
+        } catch (err) {
+          showStatus("dashboard-status", err.message, "error");
         }
       }
 
-      function toggleSalaryFields() {
-        document.getElementById("salary_fields").style.display =
-          document.getElementById("salary_enabled").checked ? "block" : "none";
+      function toggleSalaryInputs() {
+        const enabled = document.getElementById("salary-enabled").checked;
+        const container = document.getElementById("salary-fields");
+        container.style.opacity = enabled ? "1" : "0.5";
+        container.style.pointerEvents = enabled ? "all" : "none";
       }
 
-      // Uruchomienie przy starcie
-      window.onload = init;
+      function showDashboard() {
+        document.getElementById("auth-screen").classList.add("hidden");
+        document.getElementById("dashboard-screen").classList.remove("hidden");
+      }
+
+      function logout() {
+        sessionStorage.removeItem("session_token");
+        window.location.hash = "";
+        document.getElementById("dashboard-screen").classList.add("hidden");
+        document.getElementById("auth-screen").classList.remove("hidden");
+      }
+
+      function showStatus(elemId, msg, type) {
+        const el = document.getElementById(elemId);
+        el.className = `status-box ${type}`;
+        el.innerText = msg;
+      }
+
+      init();
     </script>
   </body>
 </html>
