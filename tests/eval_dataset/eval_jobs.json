@@ -1,0 +1,40 @@
+{
+  "jobs": [
+    {
+      "id": 1,
+      "text": "Szukamy programisty Python. Praca w 100% zdalna, elastyczne godziny pracy. Brak codziennych spotkań, pracujemy asynchronicznie przez Slack i GitHub. Wynagrodzenie: 15 000 - 20 000 PLN B2B.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 2,
+      "text": "Dołącz do naszego dynamicznego zespołu wsparcia! Będziesz na pierwszej linii frontu, odbierając połączenia przychodzące od naszych klientów. Wymagamy doskonałej dykcji i własnego, cichego miejsca do rozmów. 40 godzin w tygodniu na słuchawce. Zarobki: 5000 PLN brutto.",
+      "ground_truth": {
+        "is_no_phone": false,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 3,
+      "text": "Zatrudnimy asystentkę wirtualną. Praca zdalna, głównie mailowa. Oferujemy 4000 PLN netto. Aby zapewnić najwyższą jakość, wymagamy instalacji oprogramowania Time Doctor z włączoną funkcją zrzutów ekranu i śledzenia aktywności klawiatury.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": false,
+        "salary_disclosed": true
+      }
+    },
+    {
+      "id": 4,
+      "text": "Senior DevOps Engineer potrzebny od zaraz. Utrzymanie infrastruktury AWS, praca w systemie ticketowym Jira. Kontakt z zespołem wyłącznie tekstowy. Wynagrodzenie do negocjacji podczas rozmowy kwalifikacyjnej.",
+      "ground_truth": {
+        "is_no_phone": true,
+        "is_async_friendly": true,
+        "salary_disclosed": false
+      }
+    }
+  ]
+}
